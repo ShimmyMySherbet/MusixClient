@@ -1,5 +1,7 @@
-﻿using Musix.Core.Helpers;
+﻿using AngleSharp.Common;
+using Musix.Core.Helpers;
 using Musix.Core.Models;
+using Musix.Core.Models.Debug;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using SpotifyAPI.Web.Models;
@@ -18,6 +20,7 @@ namespace Musix.Core.Modules
     public class Collector
     {
         public SpotifyWebAPI Spotify;
+        public YoutubeClient YouTube = new YoutubeClient();
         private bool SpotifyAPIReady = false;
         public bool Ready { get { return SpotifyAPIReady; } }
         public Token SpotifyToken;
@@ -51,10 +54,60 @@ namespace Musix.Core.Modules
             }
         }
 
+
         public FullTrack FindTrack(ExtrapResult Ext, TimeSpan BaseLength, double MaxDeviation)
         {
             return SpotifyTrackFinder.FindTrack(Spotify, Ext, BaseLength, MaxDeviation);
         }
+
+        public string ExtractSpotifyID(string URL)
+        {
+            string Modified = URL.RemoveBaseSubStrings("https://", "http://", "www.", "open.", "spotify", ".com", "/", "track", ":");
+            //https://open.spotify.com/track/2ZdBKCs47s8LxMUPU499vc
+            //https://open.spotify.com/track/2ZdBKCs47s8LxMUPU499vc?si=uTWVLypHTyaJ18E6si9fnA
+            //spotify:track:2ZdBKCs47s8LxMUPU499vc
+            if (Modified.Contains('?'))
+            {
+                Modified = Modified.Split('?')[0];
+            }
+            return Modified;
+        }
+        public FullTrack GetTrackByURL(string URL)
+        {
+            string ID = ExtractSpotifyID(URL);
+            return Spotify.GetTrack(ID);
+        }
+        public FullTrack GetTrackByID(string ID)
+        {
+            return Spotify.GetTrack(ID);
+        }
+
+
+        //}
+        //public string RemoveBaseSubStrings(string Base, params string[] SubStrings)
+        //{
+        //    string Result = Base;
+        //    string LastRes = "";
+
+        //    while (!(LastRes == Result))
+        //    {
+        //        LastRes = Result;
+        //        foreach(string substr in SubStrings)
+        //        {
+        //            Result = RemoveBaseSubString(Result, substr);
+        //        }
+        //    }
+        //    return Result;
+        //}
+        //public string RemoveBaseSubString(string Base, string Content)
+        //{
+        //    if (Base.ToLower().StartsWith(Content.ToLower()))
+        //    {
+        //        Base = Base.Remove(0, Content.Length);
+        //    }
+        //    return Base;
+        //}
+
 
         public MusixSongResult Collect(Video video)
         {
@@ -69,8 +122,7 @@ namespace Musix.Core.Modules
         }
         public MusixSongResult Collect(string VideoURL)
         {
-            YoutubeClient Client = new YoutubeClient();
-            var GetVid = Client.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
+            var GetVid = YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
             GetVid.Wait();
             Video video = GetVid.Result;
             MusixSongResult Result = new MusixSongResult();
@@ -86,7 +138,6 @@ namespace Musix.Core.Modules
 
         public MusixSongResult Collect(FullTrack Track)
         {
-           
             MusixSongResult Result = new MusixSongResult();
             Result.SpotifyTrack = Track;
             Result.Extrap = new ExtrapResult() { TrackArtist = Track.Artists[0].Name, TrackName = Track.Name, Source = $"{string.Join(", ", Track.Artists)} - {Track.Name}" };

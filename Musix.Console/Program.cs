@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using TagLib.IFD.Entries;
 using c = System.Console;
-
+using Musix.Core.Helpers;
 namespace Musix.Console
 {
     internal class Program
@@ -15,8 +15,10 @@ namespace Musix.Console
 
         private static void Main(string[] args)
         {
+            
             CoreCollector = new Collector("955b354ccd0e4270b6ad97f8b4003d9a", "5a008b85c33b499da7857fbdf05f08ef");
             Downloader = new MusixDownloadClient() { Spotify = CoreCollector.Spotify, AudioCache = "AudioCache", ImageCachePath = "ImageCache" };
+
             while (true)
             {
                 Task T = RunSVC();
@@ -29,16 +31,22 @@ namespace Musix.Console
             c.Write("Query: ");
             string Video = c.ReadLine();
             MusixSongResult result;
-            if (Video.Contains("http"))
+
+            if (Video.ToLower().Contains("spotify"))
+            {
+                result = CoreCollector.Collect(CoreCollector.GetTrackByURL(Video));
+            } else if (Video.Contains("youtu"))
             {
                 c.WriteLine("Collection by URL...");
                 result = CoreCollector.Collect(Video);
-            }
-            else
+            } else
             {
                 c.WriteLine("Collection by Term...");
                 result = CoreCollector.CollectByName(Video);
             }
+
+            
+            
             if (result.HasTrack)
             {
                 c.WriteLine();

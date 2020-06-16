@@ -7,17 +7,24 @@ namespace Musix.Core.Modules
         public static ExtrapResult ExtrapolateDetails(string Term)
         {
             bool InB = false;
+            bool InSQB = false;
             string Ent = "";
             string Remix = "";
             string BracketContent = "";
+            string SQBracketContent = "";
             foreach (char cha in Term)
             {
-                if (!InB)
+                if (!InB & !InSQB)
                 {
                     if (cha == '(')
                     {
                         InB = true;
-                    } else
+                    }
+                    else if (cha == '[')
+                    {
+                        InSQB = true;
+                    }
+                    else
                     {
                         Ent += cha;
                     }
@@ -26,20 +33,33 @@ namespace Musix.Core.Modules
                 {
                     if (cha == ')')
                     {
+                        if (InSQB) SQBracketContent += cha;
                         InB = false;
                         if (BracketContent.ToLower().Contains("remix"))
                         {
                             Remix = BracketContent;
                         }
                         BracketContent = "";
-                    } else
+                    }
+                    else if (cha == ']')
                     {
-                        BracketContent += cha;
+                        if (InB) BracketContent += cha;
+                        InSQB = false;
+                        if (SQBracketContent.ToLower().Contains("remix"))
+                        {
+                            Remix = SQBracketContent;
+                        }
+                        SQBracketContent = "";
+                    }
+                    else
+                    {
+                       if (InB) BracketContent += cha;
+                        if (InSQB) SQBracketContent += cha;
                     }
                 }
             }
             Term = Ent;
-            ExtrapResult Result = new ExtrapResult() { Source = Term};
+            ExtrapResult Result = new ExtrapResult() { Source = Term };
             Term.Replace('|', '-');
             if (Term.Contains("-"))
             {
