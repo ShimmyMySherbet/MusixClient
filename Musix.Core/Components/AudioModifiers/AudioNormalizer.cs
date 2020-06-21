@@ -10,6 +10,11 @@ namespace Musix.Core.Components.AudioModifiers
 {
     public class AudioNormalizer : AudioEffect
     {
+        /// <summary>
+        /// Set to 1f for full normalization.
+        /// Having a small buffer can help reduce playback distortion at full volume.
+        /// </summary>
+        public float NormalizerLevel = 0.95f;
         public override AudioEffectResult ApplyEffect(ref AudioFileReader Reader)
         {
             float max = 0;
@@ -24,11 +29,11 @@ namespace Musix.Core.Components.AudioModifiers
                     if (abs > max) max = abs;
                 }
             } while (read > 0);
-            if (!(max == 0) && !(max > 1.0f))
+            if (!(max == 0) && !(max > NormalizerLevel))
             {
                 Console.WriteLine("Normalized");
                 Reader.Position = 0;
-                Reader.Volume = 1.0f / max;
+                Reader.Volume = NormalizerLevel / max;
                 return AudioEffectResult.Completed;
             } else
             {
