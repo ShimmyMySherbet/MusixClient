@@ -1,4 +1,5 @@
 ﻿using Musix.Core.API;
+using Musix.Core.Models;
 using NAudio.Wave;
 using System;
 using System.IO;
@@ -16,79 +17,66 @@ namespace Musix.Core.Components.AudioModifiers
             this.EndTime = EndTime;
         }
 
-        public override void ApplyEffect(ref AudioFileReader Reader)
+        public override AudioEffectResult ApplyEffect(ref AudioFileReader Reader)
         {
-            Console.WriteLine($"!>{Reader.FileName}");
             if (!StartTime.HasValue) StartTime = new TimeSpan(0);
             if (!EndTime.HasValue) EndTime = Reader.TotalTime;
-            string FileN = GetTempFile("mp3");
+            string FileN = GetCacheFile($"mid_audio_trim_{DateTime.Now.Ticks}.mp3");
+            string CurFile = Reader.FileName;
+            Console.WriteLine("Reader File: " + CurFile);
+            Console.WriteLine("Closing current reader...");
             Reader.Dispose();
-            try
+            if (TrimAudio(CurFile, FileN, StartTime, EndTime))
             {
-                if (TrimMp3(Reader.FileName, FileN, StartTime, EndTime))
-                {
-                    Console.WriteLine("Trimmed");
-                    Console.WriteLine("Switch");
-                    Reader = new AudioFileReader(FileN);
-                }
-                else
-                {
-                    Console.WriteLine("Cannot trim");
-                }
+                Console.WriteLine("Trimmed");
+                Reader = new AudioFileReader(FileN);
+                return AudioEffectResult.Completed | AudioEffectResult.PreEncoded;
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine("Failed, re-creating reader...");
+                Reader = new AudioFileReader(FileN);
+                Console.WriteLine("Cannot trim");
+                return AudioEffectResult.Failed;
             }
         }
 
-        private bool TrimMp3(string inputPath, string outputPath, TimeSpan? begin, TimeSpan? end)
+        public bool TrimAudio(string Input, string Output, TimeSpan? StartT, TimeSpan? EndT)
         {
-            if (begin.HasValue && end.HasValue && begin > end)
-                return false;
-            var reader = new Mp3FileReader(inputPath);
-            var writer = File.Create(outputPath);
-            Mp3Frame frame;
-            while ((frame = reader.ReadNextFrame()) != null)
+            if (File.Exists(Output)) File.Delete(Output);
+            using (Mp3FileReader Reader = new Mp3FileReader(Input))
+            using (FileStream Writer = new FileStream(Output, FileMode.OpenOrCreate, FileAccess.Write))
             {
-                if (reader.CurrentTime >= begin || !begin.HasValue)
+                Mp3Frame NextFrame = Reader.ReadNextFrame();
+                while (NextFrame != null)
                 {
-                    if (reader.CurrentTime <= end || !end.HasValue)
+                    bool WriteFrame = true;
+                    bool EndFrames = false;
+                    if (StartT.HasValue)
                     {
-                        writer.Write(frame.RawData, 0, frame.RawData.Length);
+                        if (Reader.CurrentTime < StartT.Value) WriteFrame = false;
                     }
-                    else
+                    if (EndT.HasValue)
                     {
-                        Console.WriteLine("break");
-                        break;
+                        if (Reader.CurrentTime > EndT.Value)
+                        {
+                            WriteFrame = false;
+                            EndFrames = true;
+                        }
                     }
+                    if (WriteFrame)
+                    {
+                        Writer.Write(NextFrame.RawData, 0, NextFrame.FrameLength);
+                    }
+                    if (EndFrames)
+                    {
+                        NextFrame = null;
+                        continue;
+                    }
+                    NextFrame = Reader.ReadNextFrame();
                 }
+                return Writer.Length != 0;
             }
-            reader.Close();
-            Console.WriteLine($"W len: {writer.Length}");
-            writer.Close();
-            return true;
-        }
-
-        private bool BaseTrimMp3(string inputPath, string outputPath, TimeSpan? begin, TimeSpan? end)
-        {
-            if (begin.HasValue && end.HasValue && begin > end)
-                return false;
-
-            using (var reader = new Mp3FileReader(inputPath))
-            using (var writer = File.Create(outputPath))
-            {
-                Mp3Frame frame;
-                while ((frame = reader.ReadNextFrame()) != null)
-                    if (reader.CurrentTime >= begin || !begin.HasValue)
-                    {
-                        if (reader.CurrentTime <= end || !end.HasValue)
-                            writer.Write(frame.RawData, 0, frame.RawData.Length);
-                        else break;
-                    }
-            }
-            return true;
         }
     }
 }

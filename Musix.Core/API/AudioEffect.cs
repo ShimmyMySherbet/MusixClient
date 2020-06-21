@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using Musix.Core.Models;
+using NAudio.Wave;
 using System;
 using System.IO;
 
@@ -8,7 +9,7 @@ namespace Musix.Core.API
     {
         public string AudioCachePath = null;
 
-        public abstract void ApplyEffect(ref AudioFileReader Reader);
+        public abstract AudioEffectResult ApplyEffect(ref AudioFileReader Reader);
 
         protected string GetTempFile(string ext = "")
         {
@@ -25,6 +26,12 @@ namespace Musix.Core.API
                 Console.WriteLine($">{res}");
                 return res;
             }
+        }
+
+
+        protected string GetCacheFile(string filename)
+        {
+            return Path.Combine(AudioCachePath, filename);
         }
     }
 }

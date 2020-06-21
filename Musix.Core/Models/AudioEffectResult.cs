@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Musix.Core.Models
 {
-    public class MusixDownloadConfig
+    public enum AudioEffectResult
     {
-        public bool TrimAudio;
-        public TimeSpan? TrimStartTime;
-        public TimeSpan? TrimEndTime;
+       Completed = 0,
+       Failed = -1,
+       PreEncoded = 30
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Musix.Core.API;
 using Musix.Core.Components.Providers;
+using Musix.Core.Models;
 using NAudio.Wave;
 using System;
 using System.IO;
@@ -9,7 +10,7 @@ namespace Musix.Core.Components.AudioModifiers
 {
     public class AudioNormalizer : AudioEffect
     {
-        public override void ApplyEffect(ref AudioFileReader Reader)
+        public override AudioEffectResult ApplyEffect(ref AudioFileReader Reader)
         {
             float max = 0;
             float[] buffer = new float[Reader.WaveFormat.SampleRate];
@@ -28,9 +29,10 @@ namespace Musix.Core.Components.AudioModifiers
                 Console.WriteLine("Normalized");
                 Reader.Position = 0;
                 Reader.Volume = 1.0f / max;
+                return AudioEffectResult.Completed;
             } else
             {
-                Console.WriteLine("Cannot Normalize");
+                return AudioEffectResult.Failed;
             }
         }
     }

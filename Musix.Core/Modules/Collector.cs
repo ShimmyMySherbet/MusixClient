@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using TagLib.Matroska;
 using YoutubeExplode;
 using YoutubeExplode.Videos;
 
@@ -45,6 +46,7 @@ namespace Musix.Core.Modules
             var SW = new StopWatch();
             var Tracks = Spotify.SearchItems(Term, SpotifyAPI.Web.Enums.SearchType.Track, 2);
             SW.PrintDur("Spotify Search");
+            if (Tracks.HasError()) return null;
             if (Tracks.Tracks.Items.Count >= 1)
             {
                 return Collect(Tracks.Tracks.Items[0]);

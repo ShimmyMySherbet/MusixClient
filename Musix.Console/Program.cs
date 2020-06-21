@@ -47,42 +47,46 @@ namespace Musix.Console
                 c.WriteLine("Collection by Term...");
                 result = CoreCollector.CollectByName(Video);
             }
-            c.Write("Apply Effects: [Y/N] ]");
-            string Sres = c.ReadLine();
-            if (Sres.ToLower() == "y")
-            {
-                Stack = new AudioEffectStack();
-                c.Write("Normalize: [Y/N] ");
-                string Nres = c.ReadLine();
-                if (Nres.ToLower() == "y") Stack.AddEffect(new AudioNormalizer());
 
 
-                c.Write("Crop: [Y/N] ");
-                string Cres = c.ReadLine();
-                if (Cres.ToLower() == "y")
-                {
-                    c.Write("Start Time (sec): ");
-                    int StartT = Convert.ToInt32(c.ReadLine());
-
-                    c.Write("End Time (sec): ");
-                    int EndT = Convert.ToInt32(c.ReadLine());
-                    TimeSpan? Startd = null;
-                    if (StartT != -1) Startd = new TimeSpan(0, 0, StartT);
-                    TimeSpan? EndD = null;
-                    if (EndT != -1) EndD = new TimeSpan(0, 0, StartT);
-
-                    AudioTrimmer Trimmer = new AudioTrimmer(Startd, EndD);
-
-                    Stack.AddEffect(Trimmer);
-                }
-
-            }
-
-            if (result.HasTrack)
+            if (result != null && result.HasTrack)
             {
                 c.WriteLine();
                 c.WriteLine($"Track URL: {result.SpotifyTrack.Uri}");
                 c.WriteLine($"Track: {result.SpotifyTrack.Name}");
+                c.WriteLine();
+
+                c.Write("Apply Effects: [Y/N] ");
+                string Sres = c.ReadLine();
+                if (Sres.ToLower() == "y")
+                {
+                    Stack = new AudioEffectStack();
+                    c.Write("Normalize: [Y/N] ");
+                    string Nres = c.ReadLine();
+                    if (Nres.ToLower() == "y") Stack.AddEffect(new AudioNormalizer());
+
+
+                    c.Write("Crop: [Y/N] ");
+                    string Cres = c.ReadLine();
+                    if (Cres.ToLower() == "y")
+                    {
+                        c.Write("Start Time (sec): ");
+                        int StartT = Convert.ToInt32(c.ReadLine());
+
+                        c.Write("End Time (sec): ");
+                        int EndT = Convert.ToInt32(c.ReadLine());
+                        TimeSpan? Startd = null;
+                        if (StartT != -1) Startd = new TimeSpan(0, 0, StartT);
+                        TimeSpan? EndD = null;
+                        if (EndT != -1) EndD = new TimeSpan(0, 0, EndT);
+
+                        AudioTrimmer Trimmer = new AudioTrimmer(Startd, EndD);
+
+                        Stack.AddEffect(Trimmer);
+                    }
+
+                }
+
                 await Downloader.DownloadTrack(result, "Music", Stack);
             }
             else

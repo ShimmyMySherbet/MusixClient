@@ -1,7 +1,9 @@
 ﻿using Musix.Core.API;
+using Musix.Core.Components.AudioModifiers;
 using Musix.Core.Components.Providers;
 using Musix.Core.Helpers;
 using Musix.Core.Models;
+using NAudio.Wave;
 using SpotifyAPI.Web;
 using System;
 using System.Collections.Generic;
@@ -36,17 +38,17 @@ namespace Musix.Core.Downloader
             bool HasEffects = Effects != null;
             if (HasEffects)
             {
+                Console.WriteLine("Has Effects");
                 if (string.IsNullOrEmpty(Effects.AudioCachePath)) Effects.AudioCachePath = AudioCache;
             }
-
 
             Console.WriteLine("Start Download");
             if (!Track.HasVideo) Console.WriteLine("No Vid");
             if (!Track.HasVideo) return;
-            string SourceAudio = Path.Combine(AudioCache, $"audio_{DateTime.Now.Ticks}");
+            string SourceAudio = Path.Combine(AudioCache, $"audio_source_{DateTime.Now.Ticks}");
             string AlbumCover = Path.Combine(ImageCachePath, $"cover_{DateTime.Now.Ticks}.jpg");
             string OutputFile = Path.Combine(OutputDirectory, FileHelpers.ScrubFileName($"{Track.SpotifyTrack.Artists[0].Name} - {Track.SpotifyTrack.Name}.mp3"));
-            string MidConversionFile = Path.Combine(AudioCache, FileHelpers.ScrubFileName($"{DateTime.Now.Ticks}.mp3"));
+            string MidConversionFile = Path.Combine(AudioCache, FileHelpers.ScrubFileName($"MidConversion_{DateTime.Now.Ticks}.mp3"));
             StreamManifest StreamData = await Client.Videos.Streams.GetManifestAsync(Track.YoutubeVideo.Id);
             List<AudioOnlyStreamInfo> AudioStreams = StreamData.GetAudioOnly().ToList();
             AudioStreams.OrderBy(dat => dat.Bitrate);
@@ -83,13 +85,13 @@ namespace Musix.Core.Downloader
             string ConversionFile = OutputFile;
             if (HasEffects) ConversionFile = MidConversionFile;
 
-            if (File.Exists(OutputFile)) File.Delete(ConversionFile);
+            if (File.Exists(OutputFile)) File.Delete(OutputFile);
+            if (File.Exists(ConversionFile)) File.Delete(ConversionFile);
 
             //Convert
             Console.WriteLine("Starting Conversion...");
             await ConversionsProvider.Convert(SourceAudio, ConversionFile);
             Console.WriteLine("Conversion Complete.");
-
 
             if (HasEffects)
             {
