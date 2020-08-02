@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace Musix.Core.Components.Providers
 {
-    public class MediaFoundationProvider : ConversionProvider
+    public class MediaFoundationProvider : IConversionProvider
     {
         private static bool Initialized = false;
         public int Bitrate = 192000;
 
-        public override bool CanConvert(string InputFile, string OutputFile)
+        public bool CanConvert(string InputFile, string OutputFile)
         {
             FileInfo inf = new FileInfo(OutputFile);
             string l = inf.Extension.ToLower();
             return l.EndsWith("mp3") || l.EndsWith("wma") || l.EndsWith("aac");
         }
 
-        public override Task Convert(string Inputfile, string OutputFile)
+        public Task Convert(string Inputfile, string OutputFile)
         {
             if (!Initialized)
             {

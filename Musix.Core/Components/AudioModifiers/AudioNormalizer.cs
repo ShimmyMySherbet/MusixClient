@@ -14,7 +14,7 @@ namespace Musix.Core.Components.AudioModifiers
         /// Set to 1f for full normalization.
         /// Having a small buffer can help reduce playback distortion at full volume.
         /// </summary>
-        public float NormalizerLevel = 0.95f;
+        public float NormalizerLevel = 1f;
         public override AudioEffectResult ApplyEffect(ref AudioFileReader Reader)
         {
             float max = 0;

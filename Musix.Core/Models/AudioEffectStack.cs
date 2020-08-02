@@ -111,8 +111,7 @@ namespace Musix.Core.Models
                         Succeeded += 1;
                     }
                 }
-                bool ReEncode = true;
-                
+                bool ReEncode;
                 if (Succeeded == 0)
                 {
                     System.Console.WriteLine("Re encoding; No effects passed");

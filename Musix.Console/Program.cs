@@ -1,25 +1,27 @@
-﻿using Musix.Core.Components.AudioModifiers;
-using Musix.Core.Components.Providers;
-using Musix.Core.Downloader;
-using Musix.Core.Models;
-using Musix.Core.Models.Debug;
-using Musix.Core.Modules;
-using System;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Musix.Core.Client;
+using Musix.Core.Components.AudioModifiers;
+using Musix.Core.Models;
 using c = System.Console;
 
 namespace Musix.Console
 {
     internal class Program
     {
-        private static Collector CoreCollector;
-        private static MusixDownloadClient Downloader;
+        private static MusixClient Client;
 
         private static void Main(string[] args)
         {
-            CoreCollector = new Collector("955b354ccd0e4270b6ad97f8b4003d9a", "5a008b85c33b499da7857fbdf05f08ef");
-            Downloader = new MusixDownloadClient() { Spotify = CoreCollector.Spotify, AudioCache = "AudioCache", ImageCachePath = "ImageCache" };
+            Client = new MusixClient("955b354ccd0e4270b6ad97f8b4003d9a", "5a008b85c33b499da7857fbdf05f08ef", "ImageCache", "AudioCache");
+            Client.StartClient();
+            Client.OnClientReady += Client_OnClientReady;
+            Thread.Sleep(-1);
+        }
 
+        private static void Client_OnClientReady()
+        {
             while (true)
             {
                 Task T = RunSVC();
@@ -35,19 +37,18 @@ namespace Musix.Console
             AudioEffectStack Stack = null;
             if (Video.ToLower().Contains("spotify"))
             {
-                result = CoreCollector.Collect(CoreCollector.GetTrackByURL(Video));
+                result = Client.Collect(Client.GetTrackByURL(Video));
             }
             else if (Video.Contains("youtu"))
             {
                 c.WriteLine("Collection by URL...");
-                result = CoreCollector.Collect(Video);
+                result = Client.Collect(Video);
             }
             else
             {
                 c.WriteLine("Collection by Term...");
-                result = CoreCollector.CollectByName(Video);
+                result = Client.CollectByName(Video);
             }
-
 
             if (result != null && result.HasTrack)
             {
@@ -64,7 +65,6 @@ namespace Musix.Console
                     c.Write("Normalize: [Y/N] ");
                     string Nres = c.ReadLine();
                     if (Nres.ToLower() == "y") Stack.AddEffect(new AudioNormalizer());
-
 
                     c.Write("Crop: [Y/N] ");
                     string Cres = c.ReadLine();
@@ -84,10 +84,9 @@ namespace Musix.Console
 
                         Stack.AddEffect(Trimmer);
                     }
-
                 }
 
-                await Downloader.DownloadTrack(result, "Music", Stack);
+                await Client.DownloadTrack(result, "Music", Stack);
             }
             else
             {

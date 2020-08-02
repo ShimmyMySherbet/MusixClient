@@ -8,13 +8,13 @@ using Xabe.FFmpeg;
 
 namespace Musix.Core.Components.Providers
 {
-    public class XabeFFMPEGProvider : ConversionProvider
+    public class XabeFFMPEGProvider : IConversionProvider
     {
-        public override bool CanConvert(string InputFile, string OutputFile)
+        public bool CanConvert(string InputFile, string OutputFile)
         {
             return true;
         }
-        public override async Task Convert(string Inputfile, string OutputFile)
+        public async Task Convert(string Inputfile, string OutputFile)
         {
             IConversion Conversion = await FFmpeg.Conversions.FromSnippet.Convert(Inputfile, OutputFile);
             await Conversion.Start();
