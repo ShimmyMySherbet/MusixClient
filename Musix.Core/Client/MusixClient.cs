@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Musix.Core.API;
+using Musix.Core.Components;
 using Musix.Core.Components.Providers;
 using Musix.Core.Helpers;
 using Musix.Core.Models;
@@ -30,6 +31,7 @@ namespace Musix.Core.Client
         public string ImageCachePath;
         public string AudioCache;
         public IConversionProvider ConversionsProvider;
+        public IDetailsExtrapolator DetailsExtrapolator;
         private Token SpotifyToken;
 
         public delegate void OnReadyArgs();
@@ -53,6 +55,7 @@ namespace Musix.Core.Client
             this.ImageCachePath = ImageCachePath;
             this.SpotifyClientID = SpotifyClientID;
             this.SpotifyClientToken = SpotifyClientToken;
+            DetailsExtrapolator = new DirectTrackExtrapolator();
         }
 
         public async void StartClient()
@@ -110,7 +113,7 @@ namespace Musix.Core.Client
         public MusixSongResult Collect(Video video)
         {
             MusixSongResult Result = new MusixSongResult();
-            ExtrapResult Extrap = TrackDetailsExtractor.ExtrapolateDetails(video.Title);
+            ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
             FullTrack Track = FindTrack(Extrap, video.Duration, 5000);
             Result.Extrap = Extrap;
             Result.HasLyrics = false;
@@ -125,7 +128,7 @@ namespace Musix.Core.Client
             GetVid.Wait();
             Video video = GetVid.Result;
             MusixSongResult Result = new MusixSongResult();
-            ExtrapResult Extrap = TrackDetailsExtractor.ExtrapolateDetails(video.Title);
+            ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
             Result.Extrap = Extrap;
             FullTrack Track = FindTrack(Extrap, video.Duration, 5000);
             Result.HasLyrics = false;

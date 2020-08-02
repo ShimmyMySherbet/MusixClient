@@ -1,12 +1,20 @@
-﻿using Musix.Core.Models;
-using System.Diagnostics;
+﻿using System;
+using Musix.Core.API;
+using Musix.Core.Models;
 
-namespace Musix.Core.Modules
+namespace Musix.Core.Components
 {
-    public static class TrackDetailsExtractor
+    public class DirectTrackExtrapolator : IDetailsExtrapolator
     {
-        public static ExtrapResult ExtrapolateDetails(string Term)
+        public ExtrapResult ExtrapolateDetails(string Term)
         {
+            int FPos = Term.IndexOf("ft.", 0, Term.Length, StringComparison.InvariantCultureIgnoreCase);
+
+            if (FPos != -1)
+            {
+                Term = Term.Substring(0, FPos).Trim(' ');
+            }
+
             bool InB = false;
             bool InSQB = false;
             string Ent = "";
@@ -54,7 +62,7 @@ namespace Musix.Core.Modules
                     }
                     else
                     {
-                       if (InB) BracketContent += cha;
+                        if (InB) BracketContent += cha;
                         if (InSQB) SQBracketContent += cha;
                     }
                 }
