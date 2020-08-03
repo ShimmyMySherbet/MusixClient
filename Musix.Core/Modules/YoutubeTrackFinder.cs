@@ -1,4 +1,5 @@
-﻿using Musix.Core.Models;
+﻿using Musix.Core.API;
+using Musix.Core.Models;
 using SpotifyAPI.Web.Models;
 using System;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace Musix.Core.Modules
 {
     public static class YoutubeTrackFinder
     {
-        public static Video FindYoutubeVideo(FullTrack Track, double MaxDeviation)
+        public static Video FindYoutubeVideo(FullTrack Track, double MaxDeviation, IDetailsExtrapolator Extrapolator)
         {
             YoutubeClient Client = new YoutubeClient();
             Console.WriteLine("StartCheck");
@@ -20,7 +21,7 @@ namespace Musix.Core.Modules
             var results = task.Result;
             foreach (Video video in results)
             {
-                ExtrapResult Extrap = TrackDetailsExtractor.ExtrapolateDetails(video.Title);
+                ExtrapResult Extrap = Extrapolator.ExtrapolateDetails(video.Title);
                 if (Extrap.TrackName.ToLower().Contains(Track.Name.ToLower()) && (Extrap.TrackArtist == null || Extrap.TrackArtist.ToLower().Contains(Track.Artists[0].Name.ToLower())))
                     {
                     if (Math.Abs(Track.DurationMs - video.Duration.TotalMilliseconds) <= MaxDeviation)

@@ -143,7 +143,7 @@ namespace Musix.Core.Client
             Result.SpotifyTrack = Track;
             Result.Extrap = new ExtrapResult() { TrackArtist = Track.Artists[0].Name, TrackName = Track.Name, Source = $"{string.Join(", ", Track.Artists)} - {Track.Name}" };
             StopWatch DD = new StopWatch();
-            Result.YoutubeVideo = YoutubeTrackFinder.FindYoutubeVideo(Track, 5000);
+            Result.YoutubeVideo = YoutubeTrackFinder.FindYoutubeVideo(Track, 5000, DetailsExtrapolator);
             DD.PrintDur("Collector Youtube GetVid");
             Result.HasLyrics = false;
             return Result;
