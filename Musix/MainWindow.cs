@@ -31,7 +31,6 @@ namespace Musix
                 }
             }
         }
-
         private void MainWindow_Load(object sender, EventArgs e)
         {
             SendStyle(EStyle.Blue);

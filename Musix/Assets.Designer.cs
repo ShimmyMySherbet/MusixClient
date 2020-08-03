@@ -63,6 +63,16 @@ namespace Musix {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BG_MenuHighlight {
+            get {
+                object obj = ResourceManager.GetObject("BG_MenuHighlight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Browse_Blue {
             get {
                 object obj = ResourceManager.GetObject("Browse_Blue", resourceCulture);

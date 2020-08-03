@@ -51,6 +51,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Assets.resx</DependentUpon>
     </Compile>
+    <Compile Include="Components\ColorHelper.cs" />
     <Compile Include="Controls\MusixSideBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -152,7 +153,13 @@
     <None Include="Resources\Musix_Main_R.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Musix_Icon_Rainbow.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\Musix_Icon_Blue.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BG_MenuHighlight.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
