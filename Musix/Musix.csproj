@@ -57,12 +57,6 @@
     <Compile Include="Controls\MusixSideBar.Designer.cs">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +74,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MusixSideBar.resx">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -138,6 +135,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Search_Blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Musix_Main_B.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Musix_Main_BDROP.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Musix_Main_BDROP.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Musix_Main_R.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Musix_Main_R.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Musix_Icon_Blue.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

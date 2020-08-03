@@ -10,7 +10,7 @@ namespace Musix.Core.Models
 {
     public class AudioEffectStack : IEnumerable<AudioEffect>
     {
-        private List<AudioEffect> Effects = new List<AudioEffect>();
+        private readonly List<AudioEffect> Effects = new List<AudioEffect>();
         public string AudioCachePath;
 
         public void AddEffect(AudioEffect Effect, int position = -1)

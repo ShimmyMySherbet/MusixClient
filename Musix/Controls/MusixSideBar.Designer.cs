@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.PnBrowse = new System.Windows.Forms.Panel();
-            this.pbBrowse = new System.Windows.Forms.PictureBox();
             this.lblBrowse = new System.Windows.Forms.Label();
+            this.pbBrowse = new System.Windows.Forms.PictureBox();
             this.PnSearch = new System.Windows.Forms.Panel();
             this.lblSearch = new System.Windows.Forms.Label();
             this.pbSearch = new System.Windows.Forms.PictureBox();
@@ -58,18 +58,8 @@
             this.PnBrowse.Controls.Add(this.pbBrowse);
             this.PnBrowse.Location = new System.Drawing.Point(3, 3);
             this.PnBrowse.Name = "PnBrowse";
-            this.PnBrowse.Size = new System.Drawing.Size(473, 47);
+            this.PnBrowse.Size = new System.Drawing.Size(228, 47);
             this.PnBrowse.TabIndex = 0;
-            // 
-            // pbBrowse
-            // 
-            this.pbBrowse.Image = global::Musix.Assets.Browse_Blue;
-            this.pbBrowse.Location = new System.Drawing.Point(3, 4);
-            this.pbBrowse.Name = "pbBrowse";
-            this.pbBrowse.Size = new System.Drawing.Size(35, 40);
-            this.pbBrowse.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbBrowse.TabIndex = 1;
-            this.pbBrowse.TabStop = false;
             // 
             // lblBrowse
             // 
@@ -82,6 +72,16 @@
             this.lblBrowse.TabIndex = 2;
             this.lblBrowse.Text = "Browse";
             // 
+            // pbBrowse
+            // 
+            this.pbBrowse.Image = global::Musix.Assets.Browse_Blue;
+            this.pbBrowse.Location = new System.Drawing.Point(3, 4);
+            this.pbBrowse.Name = "pbBrowse";
+            this.pbBrowse.Size = new System.Drawing.Size(35, 40);
+            this.pbBrowse.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbBrowse.TabIndex = 1;
+            this.pbBrowse.TabStop = false;
+            // 
             // PnSearch
             // 
             this.PnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -90,7 +90,7 @@
             this.PnSearch.Controls.Add(this.pbSearch);
             this.PnSearch.Location = new System.Drawing.Point(3, 53);
             this.PnSearch.Name = "PnSearch";
-            this.PnSearch.Size = new System.Drawing.Size(473, 47);
+            this.PnSearch.Size = new System.Drawing.Size(228, 47);
             this.PnSearch.TabIndex = 3;
             // 
             // lblSearch
@@ -122,7 +122,7 @@
             this.PnDownloads.Controls.Add(this.pbDownloads);
             this.PnDownloads.Location = new System.Drawing.Point(3, 103);
             this.PnDownloads.Name = "PnDownloads";
-            this.PnDownloads.Size = new System.Drawing.Size(473, 47);
+            this.PnDownloads.Size = new System.Drawing.Size(228, 47);
             this.PnDownloads.TabIndex = 4;
             // 
             // lblDownloads
@@ -154,7 +154,7 @@
             this.PnSettings.Controls.Add(this.pbSettings);
             this.PnSettings.Location = new System.Drawing.Point(3, 153);
             this.PnSettings.Name = "PnSettings";
-            this.PnSettings.Size = new System.Drawing.Size(473, 47);
+            this.PnSettings.Size = new System.Drawing.Size(228, 47);
             this.PnSettings.TabIndex = 5;
             // 
             // lblSettings
@@ -188,7 +188,7 @@
             this.Controls.Add(this.PnSearch);
             this.Controls.Add(this.PnBrowse);
             this.Name = "MusixSideBar";
-            this.Size = new System.Drawing.Size(476, 740);
+            this.Size = new System.Drawing.Size(231, 740);
             this.PnBrowse.ResumeLayout(false);
             this.PnBrowse.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbBrowse)).EndInit();

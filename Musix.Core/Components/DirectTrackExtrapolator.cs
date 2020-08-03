@@ -99,7 +99,7 @@ namespace Musix.Core.Components
             }
             Result.TrackArtist = Result.TrackArtist.Trim(' ');
             Result.TrackName = Result.TrackName.Trim(' ');
-            if (Remix != "")
+            if (Remix.Length != 0)
             {
                 Result.TrackName += " " + Remix;
             }

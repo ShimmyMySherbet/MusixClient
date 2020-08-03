@@ -43,8 +43,8 @@ namespace Musix.Core.Client
         public event OnDownloadCompleteArgs OnMusixDownloadComplete;
 
         public bool Ready { get; protected set; }
-        private string SpotifyClientID;
-        private string SpotifyClientToken;
+        private readonly string SpotifyClientID;
+        private readonly string SpotifyClientToken;
 
         public MusixClient(string SpotifyClientID, string SpotifyClientToken, string ImageCachePath = "", string AudioCachePath = "", IConversionProvider ConversionProvider = null)
         {
@@ -139,9 +139,11 @@ namespace Musix.Core.Client
 
         public MusixSongResult Collect(FullTrack Track)
         {
-            MusixSongResult Result = new MusixSongResult();
-            Result.SpotifyTrack = Track;
-            Result.Extrap = new ExtrapResult() { TrackArtist = Track.Artists[0].Name, TrackName = Track.Name, Source = $"{string.Join(", ", Track.Artists)} - {Track.Name}" };
+            MusixSongResult Result = new MusixSongResult
+            {
+                SpotifyTrack = Track,
+                Extrap = new ExtrapResult() { TrackArtist = Track.Artists[0].Name, TrackName = Track.Name, Source = $"{string.Join(", ", Track.Artists)} - {Track.Name}" }
+            };
             StopWatch DD = new StopWatch();
             Result.YoutubeVideo = YoutubeTrackFinder.FindYoutubeVideo(Track, 5000, DetailsExtrapolator);
             DD.PrintDur("Collector Youtube GetVid");
@@ -221,8 +223,10 @@ namespace Musix.Core.Client
             TagLibFile TLF = TagLibFile.Create(OutputFile);
 
             TagLibPicture Pic = new TagLibPicture(AlbumCover);
-            TagLib.Id3v2.AttachedPictureFrame Frame = new TagLib.Id3v2.AttachedPictureFrame(Pic);
-            Frame.MimeType = System.Net.Mime.MediaTypeNames.Image.Jpeg;
+            TagLib.Id3v2.AttachedPictureFrame Frame = new TagLib.Id3v2.AttachedPictureFrame(Pic)
+            {
+                MimeType = System.Net.Mime.MediaTypeNames.Image.Jpeg
+            };
             Pic.Type = TagLib.PictureType.FrontCover;
             TagLib.IPicture[] Pics = { Pic };
             TLF.Tag.Pictures = Pics;

@@ -14,7 +14,7 @@ namespace Musix.Core.API
         protected string GetTempFile(string ext = "")
         {
             if (AudioCachePath == null) return Path.GetTempFileName();
-            if (ext != "")
+            if (ext.Length != 0)
             {
                 string res = Path.Combine(AudioCachePath, $"TMP_Effect_{DateTime.Now.Ticks}.{ext}");
                 Console.WriteLine($">{res}");

@@ -12,7 +12,7 @@ namespace Musix.Console
     {
         private static MusixClient Client;
 
-        private static void Main(string[] args)
+        private static void Main()
         {
             Client = new MusixClient("955b354ccd0e4270b6ad97f8b4003d9a", "5a008b85c33b499da7857fbdf05f08ef", "ImageCache", "AudioCache");
             Client.StartClient();
