@@ -158,12 +158,12 @@ namespace Musix.Controls
                 case EMenuPage.Browse:
                     PnBrowse.BackColor = SelectedColor;
                     pbBrowse.BackColor = SelectedColor;
-                    PnDownloads.BackColor = Color.Transparent;
                     PnSearch.BackColor = Color.Transparent;
                     PnSettings.BackColor = Color.Transparent;
                     PnDownloads.BackColor = Color.Transparent;
                     pbSearch.BackColor = Color.Transparent;
                     pbSettings.BackColor = Color.Transparent;
+                    pbDownloads.BackColor = Color.Transparent;
                     break;
 
                 case EMenuPage.Downloads:

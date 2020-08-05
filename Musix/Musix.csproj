@@ -58,6 +58,30 @@
     <Compile Include="Controls\MusixSideBar.Designer.cs">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Pages\BrowserPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Pages\BrowserPage.Designer.cs">
+      <DependentUpon>BrowserPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Pages\DownloadsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Pages\DownloadsPage.Designer.cs">
+      <DependentUpon>DownloadsPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Pages\SearchPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Pages\SearchPage.Designer.cs">
+      <DependentUpon>SearchPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Pages\SettingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Pages\SettingsPage.Designer.cs">
+      <DependentUpon>SettingsPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -75,6 +99,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MusixSideBar.resx">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Pages\BrowserPage.resx">
+      <DependentUpon>BrowserPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Pages\DownloadsPage.resx">
+      <DependentUpon>DownloadsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Pages\SearchPage.resx">
+      <DependentUpon>SearchPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Pages\SettingsPage.resx">
+      <DependentUpon>SettingsPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
