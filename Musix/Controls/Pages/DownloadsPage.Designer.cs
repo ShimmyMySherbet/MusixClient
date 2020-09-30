@@ -63,6 +63,7 @@
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(114)))), ((int)(((byte)(137)))), ((int)(((byte)(218)))));
             this.Name = "DownloadsPage";
             this.Size = new System.Drawing.Size(1100, 680);
+            this.Load += new System.EventHandler(this.DownloadsPage_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

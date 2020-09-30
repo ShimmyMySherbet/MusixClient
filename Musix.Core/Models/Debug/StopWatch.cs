@@ -11,7 +11,8 @@ namespace Musix.Core.Models.Debug
         }
         public void PrintDur(string MethodName)
         {
-            Console.WriteLine($"Method {MethodName} took {GetDuration().TotalSeconds}s to run.");
+            TimeSpan span = GetDuration();
+            Console.WriteLine($"Method {MethodName} took {span.TotalSeconds}s to run ({span.Milliseconds}ms).");
         }
     }
 }

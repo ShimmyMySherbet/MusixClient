@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Musix.Core.Client;
 using Musix.Core.Components.AudioModifiers;
 using Musix.Core.Models;
+using SpotifyAPI.Web.Models;
+using YoutubeExplode.Videos;
 using c = System.Console;
 
 namespace Musix.Console
@@ -11,12 +15,14 @@ namespace Musix.Console
     internal class Program
     {
         private static MusixClient Client;
+        private static List<Assembly> Assem = new List<Assembly>();
 
         private static void Main()
         {
             Client = new MusixClient("955b354ccd0e4270b6ad97f8b4003d9a", "5a008b85c33b499da7857fbdf05f08ef", "ImageCache", "AudioCache");
             Client.StartClient();
             Client.OnClientReady += Client_OnClientReady;
+            c.WriteLine($"Creating client with conversion provider {Client.ConversionsProvider.GetType().FullName}");
             Thread.Sleep(-1);
         }
 
@@ -44,6 +50,18 @@ namespace Musix.Console
                 c.WriteLine("Collection by URL...");
                 result = Client.Collect(Video);
             }
+            else if (Video.Contains("!dr"))
+            {
+                c.Write("Youtube Video: ");
+                string yt = c.ReadLine();
+                c.Write("Spotify: ");
+                string sp = c.ReadLine();
+
+                Video V = await Client.GetVideoByURL(yt);
+                FullTrack Track = Client.GetTrackByURL(sp);
+
+                result = new MusixSongResult() { Extrap = new ExtrapResult(), HasLyrics = false, SpotifyTrack = Track, YoutubeVideo = V };
+            }
             else
             {
                 c.WriteLine("Collection by Term...");
@@ -59,6 +77,7 @@ namespace Musix.Console
 
                 c.Write("Apply Effects: [Y/N] ");
                 string Sres = c.ReadLine();
+
                 if (Sres.ToLower() == "y")
                 {
                     Stack = new AudioEffectStack();

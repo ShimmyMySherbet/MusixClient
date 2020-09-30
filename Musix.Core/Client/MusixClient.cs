@@ -99,6 +99,22 @@ namespace Musix.Core.Client
             return Modified;
         }
 
+
+
+        public MusixSongResult CollectByString(string Query)
+        {
+            
+            if (Uri.IsWellFormedUriString(Query, UriKind.RelativeOrAbsolute))
+            {
+                if (Query.ToLower().Contains("youtu"))
+                {
+                    return Collect(Query);
+                }
+            }
+            return CollectByName(Query);
+        }
+
+
         public FullTrack GetTrackByURL(string URL)
         {
             string ID = ExtractSpotifyID(URL);
@@ -114,12 +130,17 @@ namespace Musix.Core.Client
         {
             MusixSongResult Result = new MusixSongResult();
             ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
-            FullTrack Track = FindTrack(Extrap, video.Duration, 5000);
+            FullTrack Track = FindTrack(Extrap, video.Duration, 8000);
             Result.Extrap = Extrap;
             Result.HasLyrics = false;
             Result.SpotifyTrack = Track;
             Result.YoutubeVideo = video;
             return Result;
+        }
+
+        public async Task<Video> GetVideoByURL(string URL)
+        {
+            return await YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(URL));
         }
 
         public MusixSongResult Collect(string VideoURL)
@@ -165,7 +186,7 @@ namespace Musix.Core.Client
             if (!Track.HasVideo) return;
             string SourceAudio = Path.Combine(AudioCache, $"audio_source_{DateTime.Now.Ticks}");
             string AlbumCover = Path.Combine(ImageCachePath, $"cover_{DateTime.Now.Ticks}.jpg");
-            string OutputFile = Path.Combine(OutputDirectory, FileHelpers.ScrubFileName($"{Track.SpotifyTrack.Artists[0].Name} - {Track.SpotifyTrack.Name}.mp3"));
+            string OutputFile = Path.Combine(OutputDirectory, FileHelpers.ScrubFileName($"{Track.SpotifyTrack.Artists[0].Name} - {Track.SpotifyTrack.Name.Replace("?", "").Trim(' ')}.mp3"));
             string MidConversionFile = Path.Combine(AudioCache, FileHelpers.ScrubFileName($"MidConversion_{DateTime.Now.Ticks}.mp3"));
             StreamManifest StreamData = await YouTube.Videos.Streams.GetManifestAsync(Track.YoutubeVideo.Id);
             List<AudioOnlyStreamInfo> AudioStreams = StreamData.GetAudioOnly().ToList();
@@ -231,7 +252,7 @@ namespace Musix.Core.Client
             TagLib.IPicture[] Pics = { Pic };
             TLF.Tag.Pictures = Pics;
 
-            TLF.Tag.Title = Track.SpotifyTrack.Name;
+            TLF.Tag.Title = Track.SpotifyTrack.Name.Split('-')[0].Trim(' ');
             TLF.Tag.Album = Track.SpotifyTrack.Album.Name;
             TLF.Tag.AlbumArtists = Track.SpotifyTrack.Album.Artists.CastEnumerable(x => x.Name).ToArray();
             TLF.Tag.Disc = (uint)Track.SpotifyTrack.DiscNumber;

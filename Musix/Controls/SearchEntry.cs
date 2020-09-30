@@ -38,5 +38,10 @@ namespace Musix.Controls
         {
             Width = (Parent.Width - 30);
         }
+
+        private void pbDownload_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

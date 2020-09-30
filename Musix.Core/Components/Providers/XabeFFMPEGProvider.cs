@@ -1,4 +1,5 @@
 ﻿using Musix.Core.API;
+using Musix.Core.Models.Debug;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +17,10 @@ namespace Musix.Core.Components.Providers
         }
         public async Task Convert(string Inputfile, string OutputFile)
         {
+            StopWatch watcher = new StopWatch();
             IConversion Conversion = await FFmpeg.Conversions.FromSnippet.Convert(Inputfile, OutputFile);
             await Conversion.Start();
+            watcher.PrintDur("XABE");
         }
     }
 }

@@ -11,7 +11,20 @@ namespace Musix.Core.Helpers
     {
         public static string GetVideoID(string URL)
         {
-            URL = URL.Replace("?", "&");
+            if (URL.ToLower().Contains("youtube.com"))
+            {
+                return Pattern1(URL);
+            } else if (URL.ToLower().Contains("youtu.be"))
+            {
+                return Pattern2(URL);
+            } else
+            {
+                return null;
+            }
+        }
+        private static string Pattern1(string URL)
+        {
+ URL = URL.Replace("?", "&");
             string[] Parts = URL.Split('&');
             foreach(string prt in Parts)
             {
@@ -27,6 +40,11 @@ namespace Musix.Core.Helpers
                 }
             }
             return null;
+        }
+        private static string Pattern2(string URL)
+        {
+            string Base = URL.Split('?')[0];
+            return Base.Substring(Base.IndexOf("youtu.be", 0, Base.Length, StringComparison.CurrentCultureIgnoreCase) + 8).Trim('/');
         }
     }
 }

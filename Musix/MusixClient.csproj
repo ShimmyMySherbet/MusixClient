@@ -160,6 +160,7 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Managers\DownloadsManager.cs" />
     <Compile Include="Models\EMenuPage.cs" />
     <Compile Include="Models\EStyle.cs" />
     <Compile Include="Models\IStyleableControl.cs" />

@@ -96,6 +96,7 @@
             this.pbDownload.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbDownload.TabIndex = 4;
             this.pbDownload.TabStop = false;
+            this.pbDownload.Click += new System.EventHandler(this.pbDownload_Click);
             // 
             // pbArtwork
             // 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Musix.Core.Models;
 using Musix.Models;
 
 namespace Musix.Controls.Pages
@@ -44,18 +45,14 @@ namespace Musix.Controls.Pages
 
         private async void pbSearch_Click(object sender, EventArgs e)
         {
-            var Tracks = await Main.Client.Spotify.SearchItemsAsync(txtSearch.Text, SpotifyAPI.Web.Enums.SearchType.Track, 5);
-            SuspendLayout();
-            foreach (var T in Tracks.Tracks.Items)
+            MusixSongResult Result = Main.Client.CollectByString(txtSearch.Text);
+            if (Result.HasTrack && Result.HasVideo)
             {
-                SearchEntry Ent = new SearchEntry();
-                Ent.lblAlbum.Text = T.Album.Name;
-                Ent.lblArtist.Text = T.Artists[0].Name;
-                Ent.lblTrackName.Text = T.Name;
-                GetIMG(Ent, T.Album.Images[0].Url);
-                FlowEntries.Controls.Add(Ent);
+
+
+
             }
-            ResumeLayout();
+            else MessageBox.Show("Failed.");
         }
 
         private void btnClear_Click(object sender, EventArgs e)

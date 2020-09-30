@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Musix.Managers;
 
 namespace Musix.Controls.Pages
 {
@@ -15,6 +16,16 @@ namespace Musix.Controls.Pages
         public DownloadsPage()
         {
             InitializeComponent();
+        }
+
+        private void DownloadsPage_Load(object sender, EventArgs e)
+        {
+            DownloadsManager.DownloadsChanged += DownloadsManager_DownloadsChanged;
+        }
+
+        private void DownloadsManager_DownloadsChanged()
+        {
+            label1.Text = $"Downloads: {DownloadsManager.ActiveDownloads}";
         }
     }
 }
