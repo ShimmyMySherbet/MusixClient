@@ -1,10 +1,6 @@
-﻿using Musix.Core.API;
+﻿using System.Threading.Tasks;
+using Musix.Core.API;
 using Musix.Core.Models.Debug;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xabe.FFmpeg;
 
 namespace Musix.Core.Components.Providers
@@ -15,6 +11,7 @@ namespace Musix.Core.Components.Providers
         {
             return true;
         }
+
         public async Task Convert(string Inputfile, string OutputFile)
         {
             StopWatch watcher = new StopWatch();

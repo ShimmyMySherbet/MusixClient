@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Musix.Components;
 using Musix.Models;
+using Musix.Windows.API.Interfaces;
+using Musix.Windows.API.Themes;
 
 namespace Musix.Controls
 {

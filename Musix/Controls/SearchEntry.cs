@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Musix.Models;
+using Musix.Windows.API.Themes;
+using Musix.Windows.API.Interfaces;
 
 namespace Musix.Controls
 {

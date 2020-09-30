@@ -6,6 +6,8 @@ using Musix.Core;
 using Musix.Core.Client;
 using System.IO;
 using AngleSharp.Common;
+using Musix.Windows.API.Themes;
+using Musix.Windows.API.Interfaces;
 
 namespace Musix
 {

@@ -288,6 +288,14 @@
       <Project>{9bf934c5-96ad-499f-bf44-8d6a3ab3a745}</Project>
       <Name>Musix.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Musix.FFMPEG\Musix.Providers.Windows.csproj">
+      <Project>{8b7c2e71-80d8-4520-865b-510d11502eb9}</Project>
+      <Name>Musix.Providers.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Musix.Windows.API\Musix.Windows.API.csproj">
+      <Project>{02c6973f-997a-4a89-b8d0-d93be4f0452c}</Project>
+      <Name>Musix.Windows.API</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NAudio.Lame.1.1.5\build\NAudio.Lame.targets" Condition="Exists('..\packages\NAudio.Lame.1.1.5\build\NAudio.Lame.targets')" />

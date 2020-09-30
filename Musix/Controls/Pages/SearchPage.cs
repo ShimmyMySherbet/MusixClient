@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Musix.Core.Models;
 using Musix.Models;
+using Musix.Windows.API.Interfaces;
+using Musix.Windows.API.Themes;
 
 namespace Musix.Controls.Pages
 {
