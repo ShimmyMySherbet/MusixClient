@@ -5,8 +5,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Musix.Core.Models;
-using Musix.Managers;
-using Musix.Models;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Themes;
 
@@ -51,9 +49,6 @@ namespace Musix.Controls.Pages
             MusixSongResult Result = Main.Client.CollectByString(txtSearch.Text);
             if (Result.HasTrack && Result.HasVideo)
             {
-
-
-
             }
             else MessageBox.Show("Failed.");
         }
@@ -72,15 +67,15 @@ namespace Musix.Controls.Pages
             if (Style == EStyle.Blue)
             {
                 pbSearch.Image = Assets.Search_Blue;
-            } else if (Style == EStyle.Color)
+            }
+            else if (Style == EStyle.Color)
             {
                 pbSearch.Image = Assets.Search_Color;
             }
-            foreach(Control ct in FlowEntries.Controls)
+            foreach (Control ct in FlowEntries.Controls)
             {
                 if (typeof(IStyleableControl).IsAssignableFrom(ct.GetType())) ((IStyleableControl)ct).SendStyle(Style);
             }
-
         }
     }
 }

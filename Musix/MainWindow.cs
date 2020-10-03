@@ -73,6 +73,14 @@ namespace Musix
             ShowPanelItem(SelectedItem.GetMenuControl());
         }
 
+        public void ChangePage<T>() where T : IMusixMenuItem
+        {
+            if (MenuItems.ContainsKey(typeof(T)))
+            {
+                MDSSideBar.SelectItem(MenuItems[typeof(T)]);
+            }
+        }
+
         private void Client_OnClientReady()
         {
             Console.WriteLine(">>>CLIENT READY");

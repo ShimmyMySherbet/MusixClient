@@ -50,13 +50,16 @@ namespace Musix.Controls
                 {
                     OnSelect?.Invoke(this);
                 }
+
                 _IsSelected = value;
                 if (value)
                 {
                     SendHighlight(SelectedColor);
+                    Visible = MenuItem.ShowWhenSelected;
                 }
                 else
                 {
+                    Visible = MenuItem.ShowWhenUnselected;
                     if (IsHover)
                     {
                         SendHighlight(HoverColor);
@@ -113,6 +116,7 @@ namespace Musix.Controls
             Init();
             LoadUI();
             UITaskFactory = new TaskFactory(TaskScheduler);
+            Visible = item.ShowWhenUnselected;
             if (typeof(IStatusIconProvider).IsAssignableFrom(item.GetType()))
             {
                 StatusIconProvider = (IStatusIconProvider)item;
