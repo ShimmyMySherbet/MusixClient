@@ -125,6 +125,7 @@
       <DependentUpon>MusixSideBar.cs</DependentUpon>
     </None>
     <Compile Include="Controls\MenuItems\DownloadsMenuItem.cs" />
+    <Compile Include="Controls\MenuItems\InfoPage.cs" />
     <Compile Include="Controls\MenuItems\SearchMenuItem.cs" />
     <Compile Include="Controls\MenuItems\SettingsMenuItem.cs" />
     <Compile Include="Controls\MusixDynamicSidebar.cs">
@@ -144,6 +145,12 @@
     </Compile>
     <Compile Include="Controls\Pages\BrowserPage.Designer.cs">
       <DependentUpon>BrowserPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Pages\CreditsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Pages\CreditsPage.Designer.cs">
+      <DependentUpon>CreditsPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\Pages\DownloadsPage.cs">
       <SubType>UserControl</SubType>
@@ -204,6 +211,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Pages\BrowserPage.resx">
       <DependentUpon>BrowserPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Pages\CreditsPage.resx">
+      <DependentUpon>CreditsPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Pages\DownloadsPage.resx">
       <DependentUpon>DownloadsPage.cs</DependentUpon>
