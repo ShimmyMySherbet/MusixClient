@@ -28,8 +28,8 @@ namespace Musix
             Client.OnClientReady += Client_OnClientReady;
             Client.StartClient();
 
-            this.Activated += MainWindow_Activated;
-            this.Deactivate += MainWindow_Deactivate;
+            Activated += MainWindow_Activated;
+            Deactivate += MainWindow_Deactivate;
 
             MenuItems.Add(typeof(SearchMenuItem), new SearchMenuItem());
             MenuItems.Add(typeof(DownloadsMenuItem), new DownloadsMenuItem());
@@ -89,27 +89,6 @@ namespace Musix
         {
             InitializeComponent();
         }
-
-        //public void ChangeActiveScreen(EMenuPage Page)
-        //{
-        //    //foreach (Control ActiveControl in PNContent.Controls) ActiveControl.Hide();
-        //    //if (Page == EMenuPage.Browse)
-        //    //{
-        //    //    Browser.Show();
-        //    //}
-        //    //else if (Page == EMenuPage.Downloads)
-        //    //{
-        //    //    Downloads.Show();
-        //    //}
-        //    //else if (Page == EMenuPage.Search)
-        //    //{
-        //    //    Search.Show();
-        //    //}
-        //    //else if (Page == EMenuPage.Settings)
-        //    //{
-        //    //    Settings.Show();
-        //    //}
-        //}
 
         public void AddPanelItem(Control control)
         {

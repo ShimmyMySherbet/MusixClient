@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Musix.Managers;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
 using Musix.Windows.API.Themes;
@@ -24,8 +22,8 @@ namespace Musix.Controls
 
         public EStyle Style = EStyle.Blue;
 
-        TaskFactory UITaskfactory;
-        TaskScheduler UItaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        private TaskFactory UITaskfactory;
+        private TaskScheduler UItaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
         public bool IsListeningToCursor = true;
 
@@ -33,17 +31,13 @@ namespace Musix.Controls
         {
             InitializeComponent();
             UITaskfactory = new TaskFactory(UItaskScheduler);
-            //THoverUpdate.Start();
-            //MouseMove += MusixDynamicSidebar_MouseMove;
             new Thread(ListenToCursor).Start();
         }
-
-
 
         private void ListenToCursor()
         {
             Point L = Cursor.Position;
-            while(!IsDisposed)
+            while (!IsDisposed)
             {
                 while (!IsListeningToCursor)
                 {
@@ -59,26 +53,20 @@ namespace Musix.Controls
             }
         }
 
-
         private void OnCursorMoved()
         {
             UITaskfactory.StartNew(() => UpdateHovers());
         }
 
-
-
-  
         public void AddItem(IMusixMenuItem item)
         {
             Items.Add(item);
             MusixDynamicSidebarItem sidebarItem = new MusixDynamicSidebarItem(item);
             sidebarItem.SendStyle(Style);
             sidebarItem.OnSelect += SidebarItem_OnSelect;
-            //sidebarItem.OnCursorUpdate += SidebarItem_OnCursorUpdate;
             flowElements.Controls.Add(sidebarItem);
         }
 
-    
         public void UpdateHovers()
         {
             Point cpos = PointToClient(Cursor.Position);
