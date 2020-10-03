@@ -15,11 +15,11 @@ namespace Musix.Controls.Pages
     {
         public MainWindow Main;
 
-        public SearchPage(MainWindow Main)
+        public SearchPage()
         {
             InitializeComponent();
             Dock = DockStyle.Fill;
-            this.Main = Main;
+            Main = MainWindow.Instance;
         }
 
         private void SearchPage_Load(object sender, EventArgs e)

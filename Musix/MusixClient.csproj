@@ -107,8 +107,8 @@
     <Reference Include="Xabe.FFmpeg, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xabe.FFmpeg.4.1.1\lib\netstandard2.0\Xabe.FFmpeg.dll</HintPath>
     </Reference>
-    <Reference Include="YoutubeExplode, Version=5.1.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YoutubeExplode.5.1.3\lib\net461\YoutubeExplode.dll</HintPath>
+    <Reference Include="YoutubeExplode, Version=5.1.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YoutubeExplode.5.1.6\lib\net461\YoutubeExplode.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -118,11 +118,26 @@
       <DependentUpon>Assets.resx</DependentUpon>
     </Compile>
     <Compile Include="Components\ColorHelper.cs" />
-    <Compile Include="Controls\MusixSideBar.cs">
+    <None Include="Controls\MusixSideBar.cs">
+      <SubType>UserControl</SubType>
+    </None>
+    <None Include="Controls\MusixSideBar.Designer.cs">
+      <DependentUpon>MusixSideBar.cs</DependentUpon>
+    </None>
+    <Compile Include="Controls\MenuItems\DownloadsMenuItem.cs" />
+    <Compile Include="Controls\MenuItems\SearchMenuItem.cs" />
+    <Compile Include="Controls\MenuItems\SettingsMenuItem.cs" />
+    <Compile Include="Controls\MusixDynamicSidebar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\MusixSideBar.Designer.cs">
-      <DependentUpon>MusixSideBar.cs</DependentUpon>
+    <Compile Include="Controls\MusixDynamicSidebar.Designer.cs">
+      <DependentUpon>MusixDynamicSidebar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MusixDynamicSidebarItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MusixDynamicSidebarItem.Designer.cs">
+      <DependentUpon>MusixDynamicSidebarItem.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\Pages\BrowserPage.cs">
       <SubType>UserControl</SubType>
@@ -161,17 +176,29 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Managers\DownloadsManager.cs" />
+    <Compile Include="Models\EAsset.cs" />
+    <Compile Include="Models\EAssetModifier.cs" />
     <Compile Include="Models\EMenuPage.cs" />
     <Compile Include="Models\EStyle.cs" />
+    <Compile Include="Models\IAssetCache.cs" />
     <Compile Include="Models\IStyleableControl.cs" />
+    <Compile Include="Models\MusixAssetCache.cs" />
+    <Compile Include="Models\MusixAssetItem.cs" />
+    <Compile Include="Models\MusixUIManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Assets.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Assets.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MusixSideBar.resx">
+    <None Include="Controls\MusixSideBar.resx">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
+    </None>
+    <EmbeddedResource Include="Controls\MusixDynamicSidebar.resx">
+      <DependentUpon>MusixDynamicSidebar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\MusixDynamicSidebarItem.resx">
+      <DependentUpon>MusixDynamicSidebarItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Pages\BrowserPage.resx">
       <DependentUpon>BrowserPage.cs</DependentUpon>
@@ -287,10 +314,6 @@
     <ProjectReference Include="..\Musix.Core\Musix.Core.csproj">
       <Project>{9bf934c5-96ad-499f-bf44-8d6a3ab3a745}</Project>
       <Name>Musix.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Musix.FFMPEG\Musix.Providers.Windows.csproj">
-      <Project>{8b7c2e71-80d8-4520-865b-510d11502eb9}</Project>
-      <Name>Musix.Providers.Windows</Name>
     </ProjectReference>
     <ProjectReference Include="..\Musix.Windows.API\Musix.Windows.API.csproj">
       <Project>{02c6973f-997a-4a89-b8d0-d93be4f0452c}</Project>

@@ -32,17 +32,17 @@
             this.lblAlbum = new System.Windows.Forms.Label();
             this.lblArtist = new System.Windows.Forms.Label();
             this.FlowIcons = new System.Windows.Forms.FlowLayoutPanel();
-            this.pbDownload = new System.Windows.Forms.PictureBox();
-            this.pbArtwork = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
+            this.pbDownload = new System.Windows.Forms.PictureBox();
+            this.pbArtwork = new System.Windows.Forms.PictureBox();
             this.FlowIcons.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbDownload)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDownload)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).BeginInit();
             this.SuspendLayout();
             // 
             // lblTrackName
@@ -86,27 +86,6 @@
             this.FlowIcons.Size = new System.Drawing.Size(35, 122);
             this.FlowIcons.TabIndex = 5;
             // 
-            // pbDownload
-            // 
-            this.pbDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbDownload.Image = global::Musix.Assets.DownloadMain_Blue;
-            this.pbDownload.Location = new System.Drawing.Point(662, 151);
-            this.pbDownload.Name = "pbDownload";
-            this.pbDownload.Size = new System.Drawing.Size(32, 29);
-            this.pbDownload.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbDownload.TabIndex = 4;
-            this.pbDownload.TabStop = false;
-            this.pbDownload.Click += new System.EventHandler(this.pbDownload_Click);
-            // 
-            // pbArtwork
-            // 
-            this.pbArtwork.Location = new System.Drawing.Point(3, 3);
-            this.pbArtwork.Name = "pbArtwork";
-            this.pbArtwork.Size = new System.Drawing.Size(177, 177);
-            this.pbArtwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbArtwork.TabIndex = 0;
-            this.pbArtwork.TabStop = false;
-            // 
             // pictureBox1
             // 
             this.pictureBox1.Image = global::Musix.Assets.YouTube;
@@ -138,6 +117,27 @@
             this.pictureBox3.TabIndex = 8;
             this.pictureBox3.TabStop = false;
             // 
+            // pbDownload
+            // 
+            this.pbDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbDownload.Image = global::Musix.Assets.DownloadMain_Blue;
+            this.pbDownload.Location = new System.Drawing.Point(662, 151);
+            this.pbDownload.Name = "pbDownload";
+            this.pbDownload.Size = new System.Drawing.Size(32, 29);
+            this.pbDownload.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbDownload.TabIndex = 4;
+            this.pbDownload.TabStop = false;
+            this.pbDownload.Click += new System.EventHandler(this.pbDownload_Click);
+            // 
+            // pbArtwork
+            // 
+            this.pbArtwork.Location = new System.Drawing.Point(3, 3);
+            this.pbArtwork.Name = "pbArtwork";
+            this.pbArtwork.Size = new System.Drawing.Size(177, 177);
+            this.pbArtwork.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbArtwork.TabIndex = 0;
+            this.pbArtwork.TabStop = false;
+            // 
             // SearchEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -154,11 +154,11 @@
             this.Size = new System.Drawing.Size(693, 182);
             this.Load += new System.EventHandler(this.SearchEntry_Load);
             this.FlowIcons.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pbDownload)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDownload)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

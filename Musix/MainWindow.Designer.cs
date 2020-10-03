@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.PNContent = new System.Windows.Forms.Panel();
-            this.SideBar = new Musix.Controls.MusixSideBar();
+            this.MDSSideBar = new Musix.Controls.MusixDynamicSidebar();
             this.SuspendLayout();
             // 
             // PNContent
@@ -42,13 +42,16 @@
             this.PNContent.Size = new System.Drawing.Size(1138, 694);
             this.PNContent.TabIndex = 1;
             // 
-            // SideBar
+            // MDSSideBar
             // 
-            this.SideBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
-            this.SideBar.Location = new System.Drawing.Point(0, 0);
-            this.SideBar.Name = "SideBar";
-            this.SideBar.Size = new System.Drawing.Size(190, 694);
-            this.SideBar.TabIndex = 0;
+            this.MDSSideBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.MDSSideBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.MDSSideBar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(114)))), ((int)(((byte)(137)))), ((int)(((byte)(218)))));
+            this.MDSSideBar.Location = new System.Drawing.Point(-5, 0);
+            this.MDSSideBar.Name = "MDSSideBar";
+            this.MDSSideBar.Size = new System.Drawing.Size(195, 694);
+            this.MDSSideBar.TabIndex = 2;
             // 
             // MainWindow
             // 
@@ -56,7 +59,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
             this.ClientSize = new System.Drawing.Size(1334, 694);
-            this.Controls.Add(this.SideBar);
+            this.Controls.Add(this.MDSSideBar);
             this.Controls.Add(this.PNContent);
             this.Name = "MainWindow";
             this.Text = "Musix";
@@ -67,6 +70,6 @@
 
         #endregion
         private System.Windows.Forms.Panel PNContent;
-        private Controls.MusixSideBar SideBar;
+        private Controls.MusixDynamicSidebar MDSSideBar;
     }
 }

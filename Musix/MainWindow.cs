@@ -1,26 +1,26 @@
 ﻿using System;
-using System.Windows.Forms;
-using Musix.Controls.Pages;
-using Musix.Models;
-using Musix.Core;
-using Musix.Core.Client;
+using System.Collections.Generic;
 using System.IO;
-using AngleSharp.Common;
-using Musix.Windows.API.Themes;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
+using Musix.Controls.MenuItems;
+using Musix.Core.Client;
 using Musix.Windows.API.Interfaces;
+using Musix.Windows.API.Models;
+using Musix.Windows.API.Themes;
 
 namespace Musix
 {
     public partial class MainWindow : Form, IStyleableControl
     {
         public MusixClient Client;
-        public BrowserPage Browser = new BrowserPage();
-        public SearchPage Search;
-        public DownloadsPage Downloads = new DownloadsPage();
-        public SettingsPage Settings = new SettingsPage();
+        public static MainWindow Instance;
+        public Dictionary<Type, IMusixMenuItem> MenuItems = new Dictionary<Type, IMusixMenuItem>();
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
+            Instance = this;
             FileInfo AppBaseInfo = new FileInfo(Application.ExecutablePath);
             Environment.CurrentDirectory = AppBaseInfo.DirectoryName;
             CheckFolders();
@@ -28,28 +28,35 @@ namespace Musix
             Client.OnClientReady += Client_OnClientReady;
             Client.StartClient();
 
-            Search = new SearchPage(this);
+            MenuItems.Add(typeof(SearchMenuItem), new SearchMenuItem());
+            MenuItems.Add(typeof(DownloadsMenuItem), new DownloadsMenuItem());
+            MenuItems.Add(typeof(SettingsMenuItem), new SettingsMenuItem());
+            MDSSideBar.AddItem(MenuItems[typeof(SearchMenuItem)]);
+            MDSSideBar.AddItem(MenuItems[typeof(DownloadsMenuItem)]);
+            MDSSideBar.AddItem(MenuItems[typeof(SettingsMenuItem)]);
 
-            SuspendLayout();
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (Type t in asm.GetTypes().Where(x => typeof(IMusixMenuItem).IsAssignableFrom(x) && !x.IsInterface))
+                {
+                    if (!MenuItems.ContainsKey(t))
+                    {
+                        IMusixMenuItem newItem = (IMusixMenuItem)Activator.CreateInstance(t);
+                        MDSSideBar.AddItem(newItem);
+                        MenuItems.Add(t, newItem);
+                    }
+                }
+            }
 
-            PNContent.Controls.Add(Browser);
-            PNContent.Controls.Add(Search);
-            PNContent.Controls.Add(Downloads);
-            PNContent.Controls.Add(Settings);
-
-            Browser.Hide();
-            Search.Hide();
-            Downloads.Hide();
-            Settings.Hide();
-
-            ResumeLayout();
-
-            SideBar.SelectionChanged += SideBar_SelectionChanged;
-            ChangeActiveScreen(EMenuPage.Browse);
-
-
+            MDSSideBar.OnSelectionChanged += MDSSideBar_OnSelectionChanged;
+  MDSSideBar.SelectItemAtIndex(0);
             SendStyle(EStyle.Color);
+        }
 
+        private void MDSSideBar_OnSelectionChanged(IMusixMenuItem SelectedItem)
+        {
+            Console.WriteLine("SELECTION CHANGED");
+            ShowPanelItem(SelectedItem.GetMenuControl());
         }
 
         private void Client_OnClientReady()
@@ -69,30 +76,45 @@ namespace Musix
             InitializeComponent();
         }
 
-        public void ChangeActiveScreen(EMenuPage Page)
+        //public void ChangeActiveScreen(EMenuPage Page)
+        //{
+        //    //foreach (Control ActiveControl in PNContent.Controls) ActiveControl.Hide();
+        //    //if (Page == EMenuPage.Browse)
+        //    //{
+        //    //    Browser.Show();
+        //    //}
+        //    //else if (Page == EMenuPage.Downloads)
+        //    //{
+        //    //    Downloads.Show();
+        //    //}
+        //    //else if (Page == EMenuPage.Search)
+        //    //{
+        //    //    Search.Show();
+        //    //}
+        //    //else if (Page == EMenuPage.Settings)
+        //    //{
+        //    //    Settings.Show();
+        //    //}
+        //}
+
+        public void AddPanelItem(Control control)
         {
-            foreach (Control ActiveControl in PNContent.Controls) ActiveControl.Hide();
-            if (Page == EMenuPage.Browse)
+            if (!PNContent.Controls.Contains(control))
             {
-                Browser.Show();
-            }
-            else if (Page == EMenuPage.Downloads)
-            {
-                Downloads.Show();
-            }
-            else if (Page == EMenuPage.Search)
-            {
-                Search.Show();
-            }
-            else if (Page == EMenuPage.Settings)
-            {
-                Settings.Show();
+                control.Dock = DockStyle.Fill;
+                control.Visible = false;
+                PNContent.Controls.Add(control);
             }
         }
 
-        private void SideBar_SelectionChanged(EMenuPage Page)
+        public void ShowPanelItem(Control control)
         {
-            ChangeActiveScreen(Page);
+            AddPanelItem(control);
+            foreach (Control ct in PNContent.Controls)
+            {
+                if (ct.Visible) ct.Visible = false;
+            }
+            control.Visible = true;
         }
 
         public void SendStyle(EStyle Style)

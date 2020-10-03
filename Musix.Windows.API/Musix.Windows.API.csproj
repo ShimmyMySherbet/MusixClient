@@ -45,9 +45,13 @@
   <ItemGroup>
     <Compile Include="Interfaces\IMenuItem.cs" />
     <Compile Include="Interfaces\IStyleableControl.cs" />
-    <Compile Include="Models\MusixMenuItem.cs" />
+    <Compile Include="Interfaces\IUIManager.cs" />
+    <Compile Include="Models\IMusixMenuItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Themes\EStyle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controls\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

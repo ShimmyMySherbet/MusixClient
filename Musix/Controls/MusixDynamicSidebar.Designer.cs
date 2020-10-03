@@ -1,6 +1,6 @@
 ﻿namespace Musix.Controls
 {
-    partial class MusixSideBar
+    partial class MusixDynamicSidebar
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,20 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.flowElements = new System.Windows.Forms.FlowLayoutPanel();
             this.SuspendLayout();
             // 
-            // MusixSideBar
+            // flowElements
+            // 
+            this.flowElements.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowElements.Location = new System.Drawing.Point(0, 0);
+            this.flowElements.Name = "flowElements";
+            this.flowElements.Size = new System.Drawing.Size(231, 740);
+            this.flowElements.TabIndex = 0;
+            // 
+            // MusixDynamicSidebar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.Controls.Add(this.flowElements);
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(114)))), ((int)(((byte)(137)))), ((int)(((byte)(218)))));
-            this.Name = "MusixSideBar";
+            this.Name = "MusixDynamicSidebar";
             this.Size = new System.Drawing.Size(231, 740);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.FlowLayoutPanel flowElements;
     }
 }

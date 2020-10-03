@@ -125,8 +125,8 @@
       <HintPath>..\packages\Xabe.FFmpeg.4.0.0\lib\netstandard2.0\Xabe.FFmpeg.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="YoutubeExplode, Version=5.1.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YoutubeExplode.5.1.5\lib\net461\YoutubeExplode.dll</HintPath>
+    <Reference Include="YoutubeExplode, Version=5.1.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YoutubeExplode.5.1.6\lib\net461\YoutubeExplode.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
