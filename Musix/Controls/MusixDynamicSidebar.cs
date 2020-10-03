@@ -1,6 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Musix.Managers;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
 using Musix.Windows.API.Themes;
@@ -19,18 +24,68 @@ namespace Musix.Controls
 
         public EStyle Style = EStyle.Blue;
 
+        TaskFactory UITaskfactory;
+        TaskScheduler UItaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+
+        public bool IsListeningToCursor = true;
+
         public MusixDynamicSidebar()
         {
             InitializeComponent();
+            UITaskfactory = new TaskFactory(UItaskScheduler);
+            //THoverUpdate.Start();
+            //MouseMove += MusixDynamicSidebar_MouseMove;
+            new Thread(ListenToCursor).Start();
         }
 
+
+
+        private void ListenToCursor()
+        {
+            Point L = Cursor.Position;
+            while(!IsDisposed)
+            {
+                while (!IsListeningToCursor)
+                {
+                    Thread.Sleep(100);
+                }
+                Point N = Cursor.Position;
+                if (N != L)
+                {
+                    L = N;
+                    OnCursorMoved();
+                }
+                Thread.Sleep(50);
+            }
+        }
+
+
+        private void OnCursorMoved()
+        {
+            UITaskfactory.StartNew(() => UpdateHovers());
+        }
+
+
+
+  
         public void AddItem(IMusixMenuItem item)
         {
             Items.Add(item);
             MusixDynamicSidebarItem sidebarItem = new MusixDynamicSidebarItem(item);
             sidebarItem.SendStyle(Style);
             sidebarItem.OnSelect += SidebarItem_OnSelect;
+            //sidebarItem.OnCursorUpdate += SidebarItem_OnCursorUpdate;
             flowElements.Controls.Add(sidebarItem);
+        }
+
+    
+        public void UpdateHovers()
+        {
+            Point cpos = PointToClient(Cursor.Position);
+            foreach (MusixDynamicSidebarItem items in flowElements.Controls.OfType<MusixDynamicSidebarItem>())
+            {
+                CheckHover(items, cpos);
+            }
         }
 
         public void RemoveItem(IMusixMenuItem item)
@@ -136,6 +191,33 @@ namespace Musix.Controls
             {
                 item.SendStyle(Style);
             }
+        }
+
+        private void THoverUpdate_Tick(object sender, System.EventArgs e)
+        {
+        }
+
+        public void CheckHover(MusixDynamicSidebarItem item, Point ctPoint)
+        {
+            if (IsInControl(item, ctPoint))
+            {
+                if (!item.IsHover)
+                {
+                    item.IsHover = true;
+                }
+            }
+            else
+            {
+                if (item.IsHover)
+                {
+                    item.IsHover = false;
+                }
+            }
+        }
+
+        public bool IsInControl(Control ct, Point pt)
+        {
+            return pt.X >= ct.Location.X && pt.X <= ct.Location.X + ct.Width && pt.Y >= ct.Location.Y && pt.Y <= ct.Location.Y + ct.Height;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Musix.Components;
 using Musix.Models;
@@ -17,6 +18,9 @@ namespace Musix.Controls
 
         public delegate void OnSelectArgs(MusixDynamicSidebarItem item);
         public event OnSelectArgs OnSelect;
+
+        public delegate void OnCursorUpdateArgs(MusixDynamicSidebarItem item);
+        public event OnCursorUpdateArgs OnCursorUpdate;
 
         public Color SelectedColor = ColorHelper.GetColor("3d4858");
 
@@ -105,6 +109,21 @@ namespace Musix.Controls
             Click += OnClick;
             pbIcon.Click += OnClick;
             lblTitle.Click += OnClick;
+
+
+            this.MouseEnter += OnCUpdate;
+            //lblTitle.MouseEnter += OnCUpdate;
+            //pbIcon.MouseEnter += OnCUpdate;
+
+            this.MouseLeave += OnCUpdate;
+
+            lblTitle.MouseLeave += OnCUpdate;
+            pbIcon.MouseLeave += OnCUpdate;
+        }
+
+        private void OnCUpdate(object sender, EventArgs e)
+        {
+            OnCursorUpdate?.Invoke(this);
         }
 
         private void OnClick(object sender, System.EventArgs e)

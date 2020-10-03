@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.flowElements = new System.Windows.Forms.FlowLayoutPanel();
+            this.THoverUpdate = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // flowElements
@@ -36,8 +38,14 @@
             this.flowElements.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowElements.Location = new System.Drawing.Point(0, 0);
             this.flowElements.Name = "flowElements";
+            this.flowElements.Padding = new System.Windows.Forms.Padding(0, 0, 0, 10);
             this.flowElements.Size = new System.Drawing.Size(231, 740);
             this.flowElements.TabIndex = 0;
+            // 
+            // THoverUpdate
+            // 
+            this.THoverUpdate.Interval = 300;
+            this.THoverUpdate.Tick += new System.EventHandler(this.THoverUpdate_Tick);
             // 
             // MusixDynamicSidebar
             // 
@@ -55,5 +63,6 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel flowElements;
+        private System.Windows.Forms.Timer THoverUpdate;
     }
 }

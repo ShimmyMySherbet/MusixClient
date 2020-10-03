@@ -28,6 +28,9 @@ namespace Musix
             Client.OnClientReady += Client_OnClientReady;
             Client.StartClient();
 
+            this.Activated += MainWindow_Activated;
+            this.Deactivate += MainWindow_Deactivate;
+
             MenuItems.Add(typeof(SearchMenuItem), new SearchMenuItem());
             MenuItems.Add(typeof(DownloadsMenuItem), new DownloadsMenuItem());
             MenuItems.Add(typeof(SettingsMenuItem), new SettingsMenuItem());
@@ -49,8 +52,19 @@ namespace Musix
             }
 
             MDSSideBar.OnSelectionChanged += MDSSideBar_OnSelectionChanged;
-  MDSSideBar.SelectItemAtIndex(0);
+
+            MDSSideBar.SelectItemAtIndex(0);
             SendStyle(EStyle.Color);
+        }
+
+        private void MainWindow_Deactivate(object sender, EventArgs e)
+        {
+            MDSSideBar.IsListeningToCursor = false;
+        }
+
+        private void MainWindow_Activated(object sender, EventArgs e)
+        {
+            MDSSideBar.IsListeningToCursor = true;
         }
 
         private void MDSSideBar_OnSelectionChanged(IMusixMenuItem SelectedItem)
