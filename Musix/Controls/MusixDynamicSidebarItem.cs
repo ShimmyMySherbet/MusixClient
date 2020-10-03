@@ -178,6 +178,10 @@ namespace Musix.Controls
             {
                 Image newAsset = MenuItem.GetIcon(Style);
                 AssetCache.RegisterAsset(Style, EAsset.MenuIcon, newAsset);
+                pbIcon.Image = newAsset;
+            } else
+            {
+                pbIcon.Image = AssetCache.GetAsset(Style, EAsset.MenuIcon);
             }
         }
 

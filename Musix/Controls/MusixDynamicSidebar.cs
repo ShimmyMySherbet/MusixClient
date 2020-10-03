@@ -188,9 +188,11 @@ namespace Musix.Controls
 
         public void SendStyle(EStyle Style)
         {
+            System.Console.WriteLine($"GOT STYLE: {Style}");
             this.Style = Style;
             foreach (MusixDynamicSidebarItem item in flowElements.Controls.OfType<MusixDynamicSidebarItem>())
             {
+                System.Console.WriteLine("Send Style");
                 item.SendStyle(Style);
             }
         }
