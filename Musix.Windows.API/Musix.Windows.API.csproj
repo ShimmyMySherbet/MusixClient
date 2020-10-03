@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IStatusIconProvider.cs" />
     <Compile Include="Interfaces\IMenuItem.cs" />
     <Compile Include="Interfaces\IStyleableControl.cs" />
     <Compile Include="Interfaces\IUIManager.cs" />
+    <Compile Include="Models\Delegates.cs" />
     <Compile Include="Models\IMusixMenuItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Themes\EStyle.cs" />

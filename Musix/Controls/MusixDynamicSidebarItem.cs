@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Musix.Components;
+using Musix.Controls.MenuItems;
 using Musix.Models;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
 using Musix.Windows.API.Themes;
+using TagLib.Ape;
 
 namespace Musix.Controls
 {
@@ -16,10 +19,15 @@ namespace Musix.Controls
         private bool _IsSelected = false;
         private bool _IsHover = false;
 
+        public TaskScheduler TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        public TaskFactory UITaskFactory;
+
         public delegate void OnSelectArgs(MusixDynamicSidebarItem item);
+
         public event OnSelectArgs OnSelect;
 
         public delegate void OnCursorUpdateArgs(MusixDynamicSidebarItem item);
+
         public event OnCursorUpdateArgs OnCursorUpdate;
 
         public Color SelectedColor = ColorHelper.GetColor("3d4858");
@@ -27,6 +35,8 @@ namespace Musix.Controls
         public Color HoverColor = Color.FromArgb(80, 83, 88);
 
         public Color DefaultColor = Color.FromArgb(44, 47, 51);
+
+        public IStatusIconProvider StatusIconProvider;
 
         public bool IsSelected
         {
@@ -82,7 +92,6 @@ namespace Musix.Controls
             }
         }
 
-
         public void SendHighlight(Color color)
         {
             BackColor = color;
@@ -94,6 +103,7 @@ namespace Musix.Controls
         {
             InitializeComponent();
             Init();
+            Load += MusixDynamicSidebarItem_Load;
         }
 
         public MusixDynamicSidebarItem(IMusixMenuItem item)
@@ -102,6 +112,37 @@ namespace Musix.Controls
             MenuItem = item;
             Init();
             LoadUI();
+            UITaskFactory = new TaskFactory(TaskScheduler);
+            if (typeof(IStatusIconProvider).IsAssignableFrom(item.GetType()))
+            {
+                StatusIconProvider = (IStatusIconProvider)item;
+                StatusIconProvider.UpdateIcon += Provider_UpdateIcon;
+                StatusIconProvider.Init();
+            }
+        
+            Load += MusixDynamicSidebarItem_Load;
+        }
+
+        private void Provider_UpdateIcon(Image image)
+        {
+            UITaskFactory.StartNew(() => UpdateStatusIcon(image));
+        }
+
+
+        public void UpdateStatusIcon(Image image)
+        {
+            if (StatusIconProvider.DisposeOnUpdate && pbStat.Image != null)
+            {
+                pbStat.Image.Dispose();
+            }
+            pbStat.Visible = true;
+            pbStat.Image = image;
+
+        }
+
+        private void MusixDynamicSidebarItem_Load(object sender, EventArgs e)
+        {
+            Width = Parent.Width;
         }
 
         private void Init()
@@ -109,7 +150,6 @@ namespace Musix.Controls
             Click += OnClick;
             pbIcon.Click += OnClick;
             lblTitle.Click += OnClick;
-
 
             this.MouseEnter += OnCUpdate;
             //lblTitle.MouseEnter += OnCUpdate;
@@ -133,6 +173,7 @@ namespace Musix.Controls
 
         public void SendStyle(EStyle Style)
         {
+            StatusIconProvider?.StyleChanged(Style);
             if (!AssetCache.HasAsset(Style, EAsset.MenuIcon))
             {
                 Image newAsset = MenuItem.GetIcon(Style);

@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using Musix.Controls.Pages;
+using Musix.Managers;
+using Musix.Models;
+using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
 using Musix.Windows.API.Themes;
 
 namespace Musix.Controls.MenuItems
 {
-    public class DownloadsMenuItem : IMusixMenuItem
+    public class DownloadsMenuItem : IMusixMenuItem, IStatusIconProvider
     {
         public DownloadsPage page = new DownloadsPage();
         public bool ShowWhenUnselected => true;
@@ -20,14 +18,37 @@ namespace Musix.Controls.MenuItems
 
         public string Name => "Downloads";
 
-        public Control CustomMenuItem => null;
+        public event Delegates.UpdateIconArgs UpdateIcon;
+
+        public DownloadCountIconRenderer renderer;
+
+        public bool DisposeOnUpdate => true;
+
+        private void DownloadsManager_DownloadsChanged()
+        {
+            if (DownloadsManager.ActiveDownloads == 0)
+            {
+                UpdateIcon?.Invoke(null);
+            }
+            else
+            {
+                UpdateIcon?.Invoke(renderer.Render(DownloadsManager.ActiveDownloads));
+            }
+        }
+
+        public void Init()
+        {
+            renderer = new DownloadCountIconRenderer();
+            DownloadsManager.DownloadsChanged += DownloadsManager_DownloadsChanged;
+        }
 
         public Image GetIcon(EStyle style)
         {
             if (style == EStyle.Blue)
             {
                 return Assets.Download1_Blue;
-            } else
+            }
+            else
             {
                 return Assets.Download1_Color;
             }
@@ -40,6 +61,10 @@ namespace Musix.Controls.MenuItems
         }
 
         public void OnSelect()
+        {
+        }
+
+        public void StyleChanged(EStyle style)
         {
         }
     }

@@ -30,7 +30,9 @@
         {
             this.pbIcon = new System.Windows.Forms.PictureBox();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.pbStat = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbStat)).BeginInit();
             this.SuspendLayout();
             // 
             // pbIcon
@@ -55,16 +57,29 @@
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "{Title}";
             // 
+            // pbStat
+            // 
+            this.pbStat.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.pbStat.Location = new System.Drawing.Point(127, 14);
+            this.pbStat.Name = "pbStat";
+            this.pbStat.Size = new System.Drawing.Size(20, 20);
+            this.pbStat.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbStat.TabIndex = 2;
+            this.pbStat.TabStop = false;
+            this.pbStat.Visible = false;
+            // 
             // MusixDynamicSidebarItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.Controls.Add(this.pbStat);
             this.Controls.Add(this.lblTitle);
             this.Controls.Add(this.pbIcon);
             this.Name = "MusixDynamicSidebarItem";
-            this.Size = new System.Drawing.Size(231, 48);
+            this.Size = new System.Drawing.Size(152, 48);
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbStat)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -74,5 +89,6 @@
 
         private System.Windows.Forms.PictureBox pbIcon;
         private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.PictureBox pbStat;
     }
 }

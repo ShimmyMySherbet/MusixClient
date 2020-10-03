@@ -176,6 +176,8 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Managers\DownloadsManager.cs" />
+    <Compile Include="Models\DownloadCountIconRenderer.cs" />
+    <Compile Include="Models\DownloadStatusIconProvider.cs" />
     <Compile Include="Models\EAsset.cs" />
     <Compile Include="Models\EAssetModifier.cs" />
     <Compile Include="Models\EMenuPage.cs" />

@@ -9,7 +9,6 @@ namespace Musix.Windows.API.Models
         bool ShowWhenUnselected { get; }
         bool ShowWhenSelected { get; }
         string Name { get; }
-        Control CustomMenuItem { get; }
 
         Control GetMenuControl();
 

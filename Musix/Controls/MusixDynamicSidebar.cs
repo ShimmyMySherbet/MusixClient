@@ -26,18 +26,26 @@ namespace Musix.Controls
         private TaskScheduler UItaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
         public bool IsListeningToCursor = true;
+        public Thread CursorListenThread;
 
         public MusixDynamicSidebar()
         {
             InitializeComponent();
             UITaskfactory = new TaskFactory(UItaskScheduler);
-            new Thread(ListenToCursor).Start();
+            CursorListenThread = new Thread(ListenToCursor);
+            CursorListenThread.Start();
+            Application.ApplicationExit += Application_ApplicationExit;
+        }
+
+        private void Application_ApplicationExit(object sender, System.EventArgs e)
+        {
+            CursorListenThread?.Abort();
         }
 
         private void ListenToCursor()
         {
             Point L = Cursor.Position;
-            while (!IsDisposed)
+            while (Visible)
             {
                 while (!IsListeningToCursor)
                 {
@@ -69,10 +77,16 @@ namespace Musix.Controls
 
         public void UpdateHovers()
         {
-            Point cpos = PointToClient(Cursor.Position);
-            foreach (MusixDynamicSidebarItem items in flowElements.Controls.OfType<MusixDynamicSidebarItem>())
+            try
             {
-                CheckHover(items, cpos);
+                Point cpos = PointToClient(Cursor.Position);
+                foreach (MusixDynamicSidebarItem items in flowElements.Controls.OfType<MusixDynamicSidebarItem>())
+                {
+                    CheckHover(items, cpos);
+                }
+            }
+            catch (System.Exception)
+            {
             }
         }
 

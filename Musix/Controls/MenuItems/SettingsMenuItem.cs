@@ -20,8 +20,6 @@ namespace Musix.Controls.MenuItems
 
         public string Name => "Settings";
 
-        public Control CustomMenuItem => null;
-
         public Image GetIcon(EStyle style)
         {
             if (style == EStyle.Blue)
