@@ -45,3 +45,6 @@ Planned Plugins:
 
 
 This is the successor to my old 'YoutubeDownloder' project.
+
+## See More
+If you want to see updates and screenshots of development, or see new features, you can join my discord server: https://discord.gg/hpHrGac
