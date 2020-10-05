@@ -85,7 +85,7 @@ namespace Musix.Controls.Pages
             }
             else
             {
-                lblCFail.Visible = true;
+                await UITaskFactory.StartNew(() => lblCFail.Visible = true);
                 new Thread(() =>
                 {
                     Thread.Sleep(1000);

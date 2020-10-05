@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\AutoInitialize.cs" />
+    <Compile Include="Interfaces\IDependancyAssetCache.cs" />
     <Compile Include="Interfaces\IPopupItem.cs" />
     <Compile Include="Interfaces\IStatusIconProvider.cs" />
     <Compile Include="Interfaces\IMenuItem.cs" />
@@ -53,6 +55,5 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Themes\EStyle.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

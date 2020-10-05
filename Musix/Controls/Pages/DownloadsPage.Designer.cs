@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
+            this.FlowDownloads = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblNoActiveDownloads = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -41,11 +43,37 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Downloads";
             // 
+            // FlowDownloads
+            // 
+            this.FlowDownloads.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FlowDownloads.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(43)))), ((int)(((byte)(47)))));
+            this.FlowDownloads.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.FlowDownloads.Location = new System.Drawing.Point(9, 32);
+            this.FlowDownloads.Name = "FlowDownloads";
+            this.FlowDownloads.Size = new System.Drawing.Size(1067, 623);
+            this.FlowDownloads.TabIndex = 1;
+            // 
+            // lblNoActiveDownloads
+            // 
+            this.lblNoActiveDownloads.AutoSize = true;
+            this.lblNoActiveDownloads.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(43)))), ((int)(((byte)(47)))));
+            this.lblNoActiveDownloads.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNoActiveDownloads.Location = new System.Drawing.Point(377, 42);
+            this.lblNoActiveDownloads.Name = "lblNoActiveDownloads";
+            this.lblNoActiveDownloads.Size = new System.Drawing.Size(216, 25);
+            this.lblNoActiveDownloads.TabIndex = 2;
+            this.lblNoActiveDownloads.Text = "No Active Downloads";
+            this.lblNoActiveDownloads.Visible = false;
+            // 
             // DownloadsPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.Controls.Add(this.lblNoActiveDownloads);
+            this.Controls.Add(this.FlowDownloads);
             this.Controls.Add(this.label1);
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(114)))), ((int)(((byte)(137)))), ((int)(((byte)(218)))));
             this.Name = "DownloadsPage";
@@ -59,5 +87,7 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.FlowLayoutPanel FlowDownloads;
+        private System.Windows.Forms.Label lblNoActiveDownloads;
     }
 }

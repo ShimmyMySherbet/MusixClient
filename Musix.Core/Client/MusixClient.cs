@@ -34,6 +34,8 @@ namespace Musix.Core.Client
         public IDetailsExtrapolator DetailsExtrapolator;
         private Token SpotifyToken;
 
+        public Delegates.DownloadProgressChangedCallback ProgressChangedCallback;
+
         public delegate void OnReadyArgs();
 
         public event OnReadyArgs OnClientReady;
@@ -99,11 +101,8 @@ namespace Musix.Core.Client
             return Modified;
         }
 
-
-
         public MusixSongResult CollectByString(string Query)
         {
-            
             if (Uri.IsWellFormedUriString(Query, UriKind.RelativeOrAbsolute))
             {
                 if (Query.ToLower().Contains("youtu"))
@@ -113,7 +112,6 @@ namespace Musix.Core.Client
             }
             return CollectByName(Query);
         }
-
 
         public FullTrack GetTrackByURL(string URL)
         {
@@ -162,6 +160,7 @@ namespace Musix.Core.Client
             Console.WriteLine("ret.");
             return Result;
         }
+
         public async Task<MusixSongResult> CollectAsync(string VideoURL)
         {
             string ID = YoutubeHeleprs.GetVideoID(VideoURL);
@@ -192,6 +191,7 @@ namespace Musix.Core.Client
             Result.HasLyrics = false;
             return Result;
         }
+
         public async Task<MusixSongResult> CollectAsync(FullTrack Track)
         {
             MusixSongResult Result = new MusixSongResult
@@ -205,14 +205,42 @@ namespace Musix.Core.Client
             return Result;
         }
 
-        public async Task DownloadTrack(MusixSongResult Track, string OutputDirectory, AudioEffectStack Effects = null)
+        private void TryCallback(int step, int max, string status, MusixSongResult download)
         {
+            if (ProgressChangedCallback != null)
+            {
+                ProgressChangedCallback(step, max, status, download);
+            }
+        }
+
+        public async Task DownloadTrack(MusixSongResult Track, string OutputDirectory, AudioEffectStack Effects = null, CancellationToken cancellationToken = default)
+        {
+            int Steps;
+            int Step = 0;
+            if (Effects == null)
+            {
+                Steps = 9;
+            }
+            else
+            {
+                Steps = 9 + Effects.EffectCount;
+            }
+            TryCallback(Step, Steps, "Starting Download", Track);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             bool HasEffects = Effects != null;
             if (HasEffects)
             {
                 Console.WriteLine("Has Effects");
                 if (string.IsNullOrEmpty(Effects.AudioCachePath)) Effects.AudioCachePath = AudioCache;
             }
+            // Step 1
+            Step++;
+            TryCallback(Step, Steps, "Preparing Download", Track);
 
             Console.WriteLine("Start Download");
             if (!Track.HasVideo) Console.WriteLine("No Vid");
@@ -221,18 +249,38 @@ namespace Musix.Core.Client
             string AlbumCover = Path.Combine(ImageCachePath, $"cover_{DateTime.Now.Ticks}.jpg");
             string OutputFile = Path.Combine(OutputDirectory, FileHelpers.ScrubFileName($"{Track.SpotifyTrack.Artists[0].Name} - {Track.SpotifyTrack.Name.Replace("?", "").Trim(' ')}.mp3"));
             string MidConversionFile = Path.Combine(AudioCache, FileHelpers.ScrubFileName($"MidConversion_{DateTime.Now.Ticks}.mp3"));
+            // Step 2
+            Step++;
+            TryCallback(Step, Steps, "Aquiring streams", Track);
             StreamManifest StreamData = await YouTube.Videos.Streams.GetManifestAsync(Track.YoutubeVideo.Id);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            // Step 3
+            Step++;
+            TryCallback(Step, Steps, "Sorting Streams", Track);
             List<AudioOnlyStreamInfo> AudioStreams = StreamData.GetAudioOnly().ToList();
             AudioStreams.OrderBy(dat => dat.Bitrate);
             if (AudioStreams.Count() == 0) Console.WriteLine("No Streams");
             if (AudioStreams.Count() == 0) return;
             IAudioStreamInfo SelectedStream = AudioStreams[0];
+            // Step 4
+            Step++;
+            TryCallback(Step, Steps, "Starting downloads", Track);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             Task AudioDownloadTask = YouTube.Videos.Streams.DownloadAsync(SelectedStream, SourceAudio);
 
             WebClient WebCl = new WebClient();
 
+            Step++;
+            TryCallback(Step, Steps, "Starting", Track);
             SpotifyImage Cover = Track.SpotifyTrack.Album.Images[0];
-
             var CoverDownloadTask = new Task(() =>
             {
                 Console.WriteLine("Downloading Cover");
@@ -240,12 +288,23 @@ namespace Musix.Core.Client
             }
             );
             CoverDownloadTask.Start();
+            Step++;
+            TryCallback(Step, Steps, "Waiting for downloads", Track);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
 
             if (!AudioDownloadTask.IsCompleted)
             {
                 Console.WriteLine("Waiting on artwork...");
                 CoverDownloadTask.Wait();
             }
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             if (!AudioDownloadTask.IsCompleted)
             {
                 Console.WriteLine("Waiting on audio...");
@@ -253,6 +312,10 @@ namespace Musix.Core.Client
                 Console.WriteLine("Download Complete.");
             }
             Thread.Sleep(100);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
 
             string ConversionFile = OutputFile;
             if (HasEffects) ConversionFile = MidConversionFile;
@@ -260,17 +323,36 @@ namespace Musix.Core.Client
             if (File.Exists(OutputFile)) File.Delete(OutputFile);
             if (File.Exists(ConversionFile)) File.Delete(ConversionFile);
 
-            //Convert
+            Step++;
+            TryCallback(Step, Steps, "Transcoding audio to mp3", Track);
+            // Step 8
             Console.WriteLine("Starting Conversion...");
             await ConversionsProvider.Convert(SourceAudio, ConversionFile);
             Console.WriteLine("Conversion Complete.");
-
+            // Step 9
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
             if (HasEffects)
             {
-                Effects.ApplyEffects(ConversionFile, OutputFile);
+                Step++;
+                int InternalStep = Step;
+                TryCallback(Step, Steps, "Applying audio effects", Track);
+                Effects.ApplyEffects(ConversionFile, OutputFile, (step, stepmax, status, download) =>
+                {
+                    step++;
+                    TryCallback(Step, Steps, status, Track);
+                }, cancellationToken);
+            }
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
             }
 
-            //Tags
+            Step++;
+            TryCallback(Step, Steps, "Applying ID3 metadata tags", Track);
+            // Step 10
             TagLib.Id3v2.Tag.DefaultVersion = 3;
             TagLib.Id3v2.Tag.ForceDefaultVersion = true;
 
@@ -292,9 +374,17 @@ namespace Musix.Core.Client
             TLF.Tag.AlbumSort = Track.SpotifyTrack.Album.AlbumType;
             DateTime? DT = GetDate(Track.SpotifyTrack.Album.ReleaseDate);
             if (DT.HasValue) TLF.Tag.Year = (uint)DT.Value.Year;
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
             TLF.Save();
 
             // Clean Up
+            // Step 11
+
+            Step++;
+            TryCallback(Step, Steps, "Cleaning up", Track);
             WebCl.Dispose();
             TLF.Dispose();
             Console.WriteLine("Done.");

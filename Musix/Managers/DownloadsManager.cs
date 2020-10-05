@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Musix.Core.Models;
 
@@ -6,11 +7,19 @@ namespace Musix.Managers
 {
     public static class DownloadsManager
     {
-        private static List<MusixSongResult> Downloads = new List<MusixSongResult>();
+        private static List<KeyValuePair<MusixSongResult, CancellationTokenSource>> Downloads = new List<KeyValuePair<MusixSongResult, CancellationTokenSource>>();
 
         public delegate void DownloadsChangedArgs();
 
         public static event DownloadsChangedArgs DownloadsChanged;
+
+        public delegate void DownloadStartedArgs(MusixSongResult result);
+
+        public delegate void DownloadFinishedArgs(MusixSongResult result);
+
+        public static event DownloadStartedArgs DownloadStarted;
+
+        public static event DownloadFinishedArgs DownloadFinished;
 
         public static int ActiveDownloads
         {
@@ -23,12 +32,12 @@ namespace Musix.Managers
             }
         }
 
-        public static void RegisterDownload(MusixSongResult Download)
+        public static void RegisterDownload(MusixSongResult Download, CancellationTokenSource cancellationToken = null)
         {
             lock (Downloads)
             {
-                Downloads.Add(Download);
-                new Thread(x => DownloadsChanged?.Invoke()).Start();
+                Downloads.Add(new KeyValuePair<MusixSongResult, CancellationTokenSource>(Download, cancellationToken));
+                new Thread(x => { DownloadStarted?.Invoke(Download); DownloadsChanged?.Invoke(); }).Start();
             }
         }
 
@@ -36,7 +45,15 @@ namespace Musix.Managers
         {
             lock (Downloads)
             {
-                return Downloads.Contains(Download);
+                return Downloads.Where(x => x.Key == Download).Count() != 0;
+            }
+        }
+
+        public static void CancelDownload(MusixSongResult Download)
+        {
+            lock (Downloads)
+            {
+                Downloads.Where(x => x.Key == Download).FirstOrDefault().Value?.Cancel();
             }
         }
 
@@ -44,10 +61,11 @@ namespace Musix.Managers
         {
             lock (Downloads)
             {
-                if (Downloads.Contains(Download))
+                int st = Downloads.Count;
+                Downloads.RemoveAll(x => x.Key == Download);
+                if (Downloads.Count != st)
                 {
-                    Downloads.Remove(Download);
-                    new Thread(x => DownloadsChanged?.Invoke()).Start();
+                    new Thread(x => { DownloadFinished?.Invoke(Download); DownloadsChanged?.Invoke(); }).Start();
                 }
             }
         }

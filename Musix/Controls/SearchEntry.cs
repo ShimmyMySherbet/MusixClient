@@ -33,14 +33,32 @@ namespace Musix.Controls
             lblArtist.Text = result.SpotifyTrack.Album.Artists[0].Name;
             lblAlbum.Text = result.SpotifyTrack.Album.Name;
             new Thread(LoadArtwork).Start();
+            Disposed += SearchEntry_Disposed;
+        }
+
+        private void SearchEntry_Disposed(object sender, EventArgs e)
+        {
+            MainWindow.Instance.UIAssetCache.DeregisterDependant(Result.SpotifyTrack.Id, this);
         }
 
         private void LoadArtwork()
         {
-            using (WebClient webc = new WebClient())
+            if (MainWindow.Instance.UIAssetCache.AssetExists(Result.SpotifyTrack.Id))
             {
-                MemoryStream dlStream = new MemoryStream(webc.DownloadData(Result.SpotifyTrack.Album.Images[0].Url));
-                UITaskFactory.StartNew(() => pbArtwork.Image = Image.FromStream(dlStream));
+                MainWindow.Instance.UIAssetCache.RegisterDependant(Result.SpotifyTrack.Id, this);
+                UITaskFactory.StartNew(() => pbArtwork.Image = MainWindow.Instance.UIAssetCache.GetAsset(Result.SpotifyTrack.Id));
+            }
+            else
+            {
+                using (WebClient webc = new WebClient())
+                {
+                    MemoryStream dlStream = new MemoryStream(webc.DownloadData(Result.SpotifyTrack.Album.Images[0].Url));
+                    Image asset = pbArtwork.Image = Image.FromStream(dlStream);
+                    UITaskFactory.StartNew(() => pbArtwork.Image = asset);
+                    MainWindow.Instance.UIAssetCache.TryRegisterAsset(asset, Result.SpotifyTrack.Id);
+                    MainWindow.Instance.UIAssetCache.RegisterDependant(Result.SpotifyTrack.Id, this);
+
+                }
             }
         }
 
@@ -75,11 +93,13 @@ namespace Musix.Controls
 
         private async void Download()
         {
-            DownloadsManager.RegisterDownload(Result);
+            CancellationTokenSource source = new CancellationTokenSource();
+            DownloadsManager.RegisterDownload(Result, source);
             AudioEffectStack stack = new AudioEffectStack();
             stack.AddEffect(new AudioNormalizer());
-            await MainWindow.Instance.Client.DownloadTrack(Result, "Music", stack);
+            await MainWindow.Instance.Client.DownloadTrack(Result, "Music", stack, source.Token);
             DownloadsManager.TryReleaseDownload(Result);
         }
+
     }
 }

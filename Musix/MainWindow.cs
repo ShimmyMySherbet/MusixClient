@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Musix.Controls.MenuItems;
 using Musix.Core.Client;
+using Musix.Core.Models;
+using Musix.Models;
+using Musix.Windows.API.Attributes;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
 using Musix.Windows.API.Themes;
-using Unosquare.Swan;
 
 namespace Musix
 {
@@ -18,7 +21,7 @@ namespace Musix
         public MusixClient Client;
         public static MainWindow Instance;
         public Dictionary<Type, IMusixMenuItem> MenuItems = new Dictionary<Type, IMusixMenuItem>();
-
+        public IDependancyAssetCache<Image, object, string> UIAssetCache = new MusixUIAssetCache();
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
@@ -53,18 +56,33 @@ namespace Musix
                 }
             }
 
+
+            foreach (var item in MenuItems)
+            {
+                if (Attribute.GetCustomAttribute(item.Value.GetType(), typeof(AutoInitialize)) != null)
+                {
+                    Control ct = item.Value.GetMenuControl();
+                    ct.Visible = false;
+                    if (!PNContent.Controls.Contains(ct))
+                    {
+                        PNContent.Controls.Add(ct);
+                    }
+                }
+            }
+
             MDSSideBar.OnSelectionChanged += MDSSideBar_OnSelectionChanged;
 
             MDSSideBar.SelectItemAtIndex(0);
             SendStyle(EStyle.Blue);
         }
 
+  
 
         public Control SelectedPage
         {
             get
             {
-                foreach(Control ct in PNContent.Controls)
+                foreach (Control ct in PNContent.Controls)
                 {
                     if (ct.Visible) return ct;
                 }
@@ -98,7 +116,7 @@ namespace Musix
 
         public void ChangePage(Control page)
         {
-            foreach(Control pn in PNContent.Controls)
+            foreach (Control pn in PNContent.Controls)
             {
                 pn.Visible = false;
             }
@@ -110,7 +128,6 @@ namespace Musix
             }
             page.Visible = true;
         }
-
 
         public void RemovePage(Control page, bool dispose = false)
         {
@@ -141,13 +158,10 @@ namespace Musix
                 ChangePage(popup);
                 PNContent.ResumeLayout();
             }
-
         }
 
         private void Item_ClosePopupRequested(object sender, EventArgs e)
         {
-
-
         }
 
         public void ClosePopup(PanelPopup popup)

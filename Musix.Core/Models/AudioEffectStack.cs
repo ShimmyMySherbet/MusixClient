@@ -5,6 +5,7 @@ using NAudio.Wave;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Musix.Core.Models
 {
@@ -82,8 +83,9 @@ namespace Musix.Core.Models
             return Effects.GetEnumerator();
         }
 
-        public void ApplyEffects(string InputFile, string OutputFile)
+        public void ApplyEffects(string InputFile, string OutputFile, Delegates.DownloadProgressChangedCallback progressCallback = null, CancellationToken cancellationToken = default)
         {
+            int step = 0;
             if (Effects.Count != 0)
             {
                 bool RequiresRencoding = false;
@@ -91,6 +93,15 @@ namespace Musix.Core.Models
                 AudioFileReader Reader = new AudioFileReader(InputFile);
                 foreach (AudioEffect Effect in Effects)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                    step++;
+                    progressCallback?.Invoke(step, -1, $"Applying effect {Effect.GetType()}", null);
+
+
+
                     if (string.IsNullOrEmpty(Effect.AudioCachePath)) Effect.AudioCachePath = AudioCachePath;
 
                     Reader.Position = 0;
@@ -128,6 +139,9 @@ namespace Musix.Core.Models
                 }
                 if (ReEncode)
                 {
+                    step++;
+                    progressCallback?.Invoke(step, -1, $"Re-encoding mp3", null);
+
                     System.Console.WriteLine("Re-Encoding...");
                     using (var writer = new LameMP3FileWriter(OutputFile, Reader.WaveFormat, 128))
                     {
@@ -136,6 +150,9 @@ namespace Musix.Core.Models
                     Reader.Dispose();
                 } else
                 {
+                    step++;
+                    progressCallback?.Invoke(step, -1, $"Finalizing effects", null);
+
                     System.Console.WriteLine("Copy Out");
                     File.Copy(Reader.FileName, OutputFile);
                 }

@@ -124,12 +124,18 @@
     <None Include="Controls\MusixSideBar.Designer.cs">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
     </None>
-    <Compile Include="Controls\MenuItems\DownloadsMenuItem.cs" />
-    <Compile Include="Controls\MenuItems\InfoPage.cs" />
-    <Compile Include="Controls\MenuItems\PanelPopup.cs">
+    <Compile Include="Controls\ActiveDownloadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\MenuItems\PanelPopup.Designer.cs">
+    <Compile Include="Controls\ActiveDownloadControl.Designer.cs">
+      <DependentUpon>ActiveDownloadControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MenuItems\DownloadsMenuItem.cs" />
+    <Compile Include="Controls\MenuItems\InfoPage.cs" />
+    <Compile Include="Controls\PanelPopup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PanelPopup.Designer.cs">
       <DependentUpon>PanelPopup.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MenuItems\SearchMenuItem.cs" />
@@ -212,6 +218,7 @@
     <Compile Include="Models\IStyleableControl.cs" />
     <Compile Include="Models\MusixAssetCache.cs" />
     <Compile Include="Models\MusixAssetItem.cs" />
+    <Compile Include="Models\MusixUIAssetCache.cs" />
     <Compile Include="Models\MusixUIManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -222,7 +229,10 @@
     <None Include="Controls\MusixSideBar.resx">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
     </None>
-    <EmbeddedResource Include="Controls\MenuItems\PanelPopup.resx">
+    <EmbeddedResource Include="Controls\ActiveDownloadControl.resx">
+      <DependentUpon>ActiveDownloadControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\PanelPopup.resx">
       <DependentUpon>PanelPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\MusixDynamicSidebar.resx">

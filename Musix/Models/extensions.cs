@@ -16,6 +16,26 @@ namespace Musix.Models
             rPos.X = (int)(offset / 2.2);
             control.Location = rPos;
         }
+        public static void CentreControlPreferred(this Control control)
+        {
+            control.Width = control.PreferredSize.Width;
+            int cWidth = control.Width;
+            int offset = control.Parent.Width - cWidth;
+            Point rPos = control.Location;
+            rPos.X = (int)(offset / 2.2);
+            control.Location = rPos;
+        }
+        public static void CentreControlFull(this Control control)
+        {
+            int cWidth = control.Width;
+            int cHeight = control.Height;
+            int offsetW = control.Parent.Width - cWidth;
+            int offsetH = control.Parent.Height - cHeight;
+            Point rPos = control.Location;
+            rPos.X = (int)(offsetW / 2);
+            rPos.Y = (int)(offsetH / 2);
+            control.Location = rPos;
+        }
 
         public static void ClosePopup(this IPopupItem popup)
         {

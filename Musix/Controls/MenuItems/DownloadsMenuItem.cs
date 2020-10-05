@@ -6,9 +6,10 @@ using Musix.Models;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
 using Musix.Windows.API.Themes;
-
+using Musix.Windows.API.Attributes;
 namespace Musix.Controls.MenuItems
 {
+    [AutoInitialize]
     public class DownloadsMenuItem : IMusixMenuItem, IStatusIconProvider
     {
         public DownloadsPage page = new DownloadsPage();
