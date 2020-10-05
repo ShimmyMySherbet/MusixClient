@@ -44,7 +44,8 @@ namespace Musix.Controls.Pages
         private void DownloadsPage_SizeChanged(object sender, EventArgs e)
         {
             lblNoActiveDownloads.CentreControlFull();
-            lblNoActiveDownloads.Visible = true;
+            foreach (Control ct in FlowDownloads.Controls)
+                ct.Width = (FlowDownloads.Width - 13);
         }
 
         public void ClientProgressCallback(int step, int stepMax, string status, MusixSongResult download)
@@ -83,6 +84,7 @@ namespace Musix.Controls.Pages
 
         private void DownloadsPage_Load(object sender, EventArgs e)
         {
+            lblNoActiveDownloads.Visible = DownloadsManager.ActiveDownloads == 0;
         }
 
         public ActiveDownloadControl GetControl(MusixSongResult result)

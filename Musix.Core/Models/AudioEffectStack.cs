@@ -98,7 +98,7 @@ namespace Musix.Core.Models
                         return;
                     }
                     step++;
-                    progressCallback?.Invoke(step, -1, $"Applying effect {Effect.GetType()}", null);
+                    progressCallback?.Invoke(step, -1, $"Applying effect {Effect.GetType().Name}", null);
 
 
 

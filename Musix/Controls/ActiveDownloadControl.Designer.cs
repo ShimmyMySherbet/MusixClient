@@ -70,6 +70,8 @@
             // 
             // pbprogress
             // 
+            this.pbprogress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pbprogress.Location = new System.Drawing.Point(160, 107);
             this.pbprogress.Name = "pbprogress";
             this.pbprogress.Size = new System.Drawing.Size(802, 23);
@@ -87,6 +89,7 @@
             // 
             // btnCancelDownload
             // 
+            this.btnCancelDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancelDownload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelDownload.Location = new System.Drawing.Point(968, 107);
             this.btnCancelDownload.Name = "btnCancelDownload";

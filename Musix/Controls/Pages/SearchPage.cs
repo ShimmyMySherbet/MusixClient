@@ -32,7 +32,7 @@ namespace Musix.Controls.Pages
         private void FlowEntries_SizeChanged(object sender, EventArgs e)
         {
             foreach (Control ct in FlowEntries.Controls)
-                ct.Width = (FlowEntries.Width - 30);
+                ct.Width = (FlowEntries.Width - 13);
         }
 
         private async void GetIMG(SearchEntry Ent, string URL)

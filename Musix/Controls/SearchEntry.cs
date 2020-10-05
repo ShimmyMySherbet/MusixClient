@@ -80,7 +80,8 @@ namespace Musix.Controls
 
         private void SearchEntry_Load(object sender, EventArgs e)
         {
-            Width = (Parent.Width - 30);
+            Width = (Parent.Width - 10);
+            Anchor = AnchorStyles.Left | AnchorStyles.Right;
         }
 
         private void pbDownload_Click(object sender, EventArgs e)
