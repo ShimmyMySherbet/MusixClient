@@ -126,6 +126,12 @@
     </None>
     <Compile Include="Controls\MenuItems\DownloadsMenuItem.cs" />
     <Compile Include="Controls\MenuItems\InfoPage.cs" />
+    <Compile Include="Controls\MenuItems\PanelPopup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MenuItems\PanelPopup.Designer.cs">
+      <DependentUpon>PanelPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MenuItems\SearchMenuItem.cs" />
     <Compile Include="Controls\MenuItems\SettingsMenuItem.cs" />
     <Compile Include="Controls\MusixDynamicSidebar.cs">
@@ -170,6 +176,18 @@
     <Compile Include="Controls\Pages\SettingsPage.Designer.cs">
       <DependentUpon>SettingsPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Popups\ManualResolvePopup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Popups\ManualResolvePopup.Designer.cs">
+      <DependentUpon>ManualResolvePopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Popups\TestPopup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Popups\TestPopup.Designer.cs">
+      <DependentUpon>TestPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SearchEntry.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -189,6 +207,7 @@
     <Compile Include="Models\EAssetModifier.cs" />
     <Compile Include="Models\EMenuPage.cs" />
     <Compile Include="Models\EStyle.cs" />
+    <Compile Include="Models\extensions.cs" />
     <Compile Include="Models\IAssetCache.cs" />
     <Compile Include="Models\IStyleableControl.cs" />
     <Compile Include="Models\MusixAssetCache.cs" />
@@ -203,6 +222,9 @@
     <None Include="Controls\MusixSideBar.resx">
       <DependentUpon>MusixSideBar.cs</DependentUpon>
     </None>
+    <EmbeddedResource Include="Controls\MenuItems\PanelPopup.resx">
+      <DependentUpon>PanelPopup.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\MusixDynamicSidebar.resx">
       <DependentUpon>MusixDynamicSidebar.cs</DependentUpon>
     </EmbeddedResource>
@@ -223,6 +245,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Pages\SettingsPage.resx">
       <DependentUpon>SettingsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Popups\ManualResolvePopup.resx">
+      <DependentUpon>ManualResolvePopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Popups\TestPopup.resx">
+      <DependentUpon>TestPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\SearchEntry.resx">
       <DependentUpon>SearchEntry.cs</DependentUpon>

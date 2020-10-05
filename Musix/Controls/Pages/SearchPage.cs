@@ -2,8 +2,10 @@
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Musix.Controls.Popups;
 using Musix.Core.Models;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Themes;
@@ -13,6 +15,7 @@ namespace Musix.Controls.Pages
     public partial class SearchPage : UserControl, IStyleableControl
     {
         public MainWindow Main;
+        public TaskFactory UITaskFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
 
         public SearchPage()
         {
@@ -44,13 +47,68 @@ namespace Musix.Controls.Pages
             }
         }
 
-        private async void pbSearch_Click(object sender, EventArgs e)
+        private void pbSearch_Click(object sender, EventArgs e)
         {
-            MusixSongResult Result = Main.Client.CollectByString(txtSearch.Text);
-            if (Result.HasTrack && Result.HasVideo)
+            if (txtSearch.Enabled)
             {
+                txtSearch.Enabled = false;
+                new Thread(() => RunSearch(txtSearch.Text, true)).Start();
             }
-            else MessageBox.Show("Failed.");
+        }
+
+        private async void RunSearch(string query, bool OpenSearchOnConplete = false)
+        {
+            MusixSongResult result = null;
+            bool Passed = false;
+            if (query.ToLower().Contains("spotify"))
+            {
+                Console.WriteLine("Collect via spotify");
+                result = Main.Client.Collect(Main.Client.GetTrackByURL(query));
+            }
+            else if (query.Contains("youtu"))
+            {
+                Console.WriteLine("Collect via Youtube");
+                result = await Main.Client.CollectAsync(query);
+            }
+            else
+            {
+                Console.WriteLine("Collect via Query");
+
+                result = Main.Client.CollectByName(query);
+            }
+
+            if (result != null && result.HasTrack && result.HasVideo)
+            {
+                Passed = true;
+                Console.WriteLine("Creating UI entry");
+                AddMusixEntry(result);
+            }
+            else
+            {
+                lblCFail.Visible = true;
+                new Thread(() =>
+                {
+                    Thread.Sleep(1000);
+                    UITaskFactory.StartNew(() => lblCFail.Visible = false);
+                }).Start();
+            }
+            if (OpenSearchOnConplete)
+            {
+                await UITaskFactory.StartNew(() =>
+                {
+                    if (Passed)
+                    {
+                        txtSearch.Text = "";
+                    }
+                    txtSearch.Enabled = true;
+                });
+            }
+            Console.WriteLine("Finished.");
+        }
+
+        public void AddMusixEntry(MusixSongResult result)
+        {
+            UITaskFactory.StartNew(() => FlowEntries.Controls.Add(new SearchEntry(result)));
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -77,5 +135,23 @@ namespace Musix.Controls.Pages
                 if (typeof(IStyleableControl).IsAssignableFrom(ct.GetType())) ((IStyleableControl)ct).SendStyle(Style);
             }
         }
+
+        private void btnTestPopup_Click(object sender, EventArgs e)
+        {
+            ManualResolvePopup popup = new ManualResolvePopup("", "", onMaualPromptCancelled, onManualPrompt);
+            MainWindow.Instance.ShowPopup(popup);
+        }
+        private void onMaualPromptCancelled() 
+        {
+            Console.WriteLine("popup cancelled");
+        }
+
+
+        private async void onManualPrompt(string SpotifyTrackID, string YoutubeTrackID)
+        {
+            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(new YoutubeExplode.Videos.VideoId(YoutubeTrackID))};
+            AddMusixEntry(result);
+        }
+
     }
 }

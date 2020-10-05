@@ -32,6 +32,8 @@
             this.FlowEntries = new System.Windows.Forms.FlowLayoutPanel();
             this.pbSearch = new System.Windows.Forms.PictureBox();
             this.btnClear = new System.Windows.Forms.Button();
+            this.btnManualEntry = new System.Windows.Forms.Button();
+            this.lblCFail = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbSearch)).BeginInit();
             this.SuspendLayout();
             // 
@@ -86,11 +88,36 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // btnManualEntry
+            // 
+            this.btnManualEntry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnManualEntry.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnManualEntry.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnManualEntry.Location = new System.Drawing.Point(1062, 84);
+            this.btnManualEntry.Name = "btnManualEntry";
+            this.btnManualEntry.Size = new System.Drawing.Size(35, 33);
+            this.btnManualEntry.TabIndex = 5;
+            this.btnManualEntry.Text = "M";
+            this.btnManualEntry.UseVisualStyleBackColor = true;
+            this.btnManualEntry.Click += new System.EventHandler(this.btnTestPopup_Click);
+            // 
+            // lblCFail
+            // 
+            this.lblCFail.AutoSize = true;
+            this.lblCFail.Location = new System.Drawing.Point(495, 0);
+            this.lblCFail.Name = "lblCFail";
+            this.lblCFail.Size = new System.Drawing.Size(38, 13);
+            this.lblCFail.TabIndex = 6;
+            this.lblCFail.Text = "Failed.";
+            this.lblCFail.Visible = false;
+            // 
             // SearchPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.Controls.Add(this.lblCFail);
+            this.Controls.Add(this.btnManualEntry);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.FlowEntries);
             this.Controls.Add(this.pbSearch);
@@ -111,5 +138,7 @@
         private System.Windows.Forms.PictureBox pbSearch;
         private System.Windows.Forms.FlowLayoutPanel FlowEntries;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnManualEntry;
+        private System.Windows.Forms.Label lblCFail;
     }
 }

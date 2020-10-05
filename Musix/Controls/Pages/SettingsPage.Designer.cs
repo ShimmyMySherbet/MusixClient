@@ -30,6 +30,7 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.btnCredits = new System.Windows.Forms.Button();
+            this.btnTestPopup = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -55,11 +56,25 @@
             this.btnCredits.UseVisualStyleBackColor = true;
             this.btnCredits.Click += new System.EventHandler(this.btnCredits_Click);
             // 
+            // btnTestPopup
+            // 
+            this.btnTestPopup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTestPopup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTestPopup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnTestPopup.Location = new System.Drawing.Point(890, 648);
+            this.btnTestPopup.Name = "btnTestPopup";
+            this.btnTestPopup.Size = new System.Drawing.Size(107, 29);
+            this.btnTestPopup.TabIndex = 2;
+            this.btnTestPopup.Text = "Test Popup";
+            this.btnTestPopup.UseVisualStyleBackColor = true;
+            this.btnTestPopup.Click += new System.EventHandler(this.btnTestPopup_Click);
+            // 
             // SettingsPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(47)))), ((int)(((byte)(51)))));
+            this.Controls.Add(this.btnTestPopup);
             this.Controls.Add(this.btnCredits);
             this.Controls.Add(this.label1);
             this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(114)))), ((int)(((byte)(137)))), ((int)(((byte)(218)))));
@@ -74,5 +89,6 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnCredits;
+        private System.Windows.Forms.Button btnTestPopup;
     }
 }

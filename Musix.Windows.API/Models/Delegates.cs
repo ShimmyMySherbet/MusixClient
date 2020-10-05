@@ -10,5 +10,8 @@ namespace Musix.Windows.API.Models
     public class Delegates
     {
         public delegate void UpdateIconArgs(Image image);
+        public delegate void OnManualResolveCancelled();
+        public delegate void OnManualResolveFinished(string SpotifyTrackID, string YoutubeTrackID);
+        public delegate void OnPopupCloseRequestedArgs(object sender, EventArgs e);
     }
 }

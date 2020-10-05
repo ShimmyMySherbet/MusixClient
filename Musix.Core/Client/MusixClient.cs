@@ -145,16 +145,37 @@ namespace Musix.Core.Client
 
         public MusixSongResult Collect(string VideoURL)
         {
+            Console.WriteLine("get id");
             var GetVid = YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
+            Console.WriteLine("get wait");
             GetVid.Wait();
+            Console.WriteLine("got vid");
             Video video = GetVid.Result;
             MusixSongResult Result = new MusixSongResult();
+            Console.WriteLine("run extrap");
             ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
             Result.Extrap = Extrap;
             FullTrack Track = FindTrack(Extrap, video.Duration, 5000);
             Result.HasLyrics = false;
             Result.SpotifyTrack = Track;
             Result.YoutubeVideo = video;
+            Console.WriteLine("ret.");
+            return Result;
+        }
+        public async Task<MusixSongResult> CollectAsync(string VideoURL)
+        {
+            string ID = YoutubeHeleprs.GetVideoID(VideoURL);
+            Console.WriteLine($"VID: {ID}");
+            Video video = await YouTube.Videos.GetAsync(ID);
+            MusixSongResult Result = new MusixSongResult();
+            Console.WriteLine("run extrap");
+            ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
+            Result.Extrap = Extrap;
+            FullTrack Track = FindTrack(Extrap, video.Duration, 5000);
+            Result.HasLyrics = false;
+            Result.SpotifyTrack = Track;
+            Result.YoutubeVideo = video;
+            Console.WriteLine("ret.");
             return Result;
         }
 
@@ -168,6 +189,18 @@ namespace Musix.Core.Client
             StopWatch DD = new StopWatch();
             Result.YoutubeVideo = YoutubeTrackFinder.FindYoutubeVideo(Track, 5000, DetailsExtrapolator);
             DD.PrintDur("Collector Youtube GetVid");
+            Result.HasLyrics = false;
+            return Result;
+        }
+        public async Task<MusixSongResult> CollectAsync(FullTrack Track)
+        {
+            MusixSongResult Result = new MusixSongResult
+            {
+                SpotifyTrack = Track,
+                Extrap = new ExtrapResult() { TrackArtist = Track.Artists[0].Name, TrackName = Track.Name, Source = $"{string.Join(", ", Track.Artists)} - {Track.Name}" }
+            };
+            StopWatch DD = new StopWatch();
+            Result.YoutubeVideo = await YoutubeTrackFinder.FindYoutubeVideoAsync(Track, 5000, DetailsExtrapolator);
             Result.HasLyrics = false;
             return Result;
         }

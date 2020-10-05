@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using Musix.Core.Models;
 
 namespace Musix.Managers
@@ -11,31 +7,42 @@ namespace Musix.Managers
     public static class DownloadsManager
     {
         private static List<MusixSongResult> Downloads = new List<MusixSongResult>();
+
         public delegate void DownloadsChangedArgs();
+
         public static event DownloadsChangedArgs DownloadsChanged;
 
         public static int ActiveDownloads
         {
             get
             {
-                lock(Downloads)
+                lock (Downloads)
                 {
                     return Downloads.Count;
                 }
             }
         }
+
         public static void RegisterDownload(MusixSongResult Download)
         {
-            lock(Downloads)
+            lock (Downloads)
             {
                 Downloads.Add(Download);
                 new Thread(x => DownloadsChanged?.Invoke()).Start();
             }
         }
 
+        public static bool IsDownloading(MusixSongResult Download)
+        {
+            lock (Downloads)
+            {
+                return Downloads.Contains(Download);
+            }
+        }
+
         public static void TryReleaseDownload(MusixSongResult Download)
         {
-            lock(Downloads)
+            lock (Downloads)
             {
                 if (Downloads.Contains(Download))
                 {
@@ -44,6 +51,5 @@ namespace Musix.Managers
                 }
             }
         }
-
     }
 }
