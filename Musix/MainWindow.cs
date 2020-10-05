@@ -63,6 +63,7 @@ namespace Musix
                 {
                     Control ct = item.Value.GetMenuControl();
                     ct.Visible = false;
+                    ct.Dock = DockStyle.Fill;
                     if (!PNContent.Controls.Contains(ct))
                     {
                         PNContent.Controls.Add(ct);
@@ -116,11 +117,12 @@ namespace Musix
 
         public void ChangePage(Control page)
         {
+
             foreach (Control pn in PNContent.Controls)
             {
                 pn.Visible = false;
             }
-
+            page.Dock = DockStyle.Fill;
             if (!PNContent.Controls.Contains(page))
             {
                 PNContent.Controls.Add(page);

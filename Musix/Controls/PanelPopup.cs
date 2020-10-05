@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TagLib.IFD.Tags;
 using System.Diagnostics;
+using Musix.Models;
 
 namespace Musix.Controls.MenuItems
 {
@@ -47,6 +48,16 @@ namespace Musix.Controls.MenuItems
             BackgroundImage = pBase;
             Load += PanelPopup_Load;
             Click += PanelPopup_Click;
+            SizeChanged += PanelPopup_SizeChanged;
+        }
+
+        private void PanelPopup_SizeChanged(object sender, EventArgs e)
+        {
+            pnContent.CentreControlFull();
+            popupBase.Size = Size;
+            Bitmap bitmap = new Bitmap(popupBase.Width, popupBase.Height);
+            popupBase.DrawToBitmap(bitmap, new Rectangle(new Point(0, 0), popupBase.Size));
+            BackgroundImage = bitmap;
         }
 
         private void PanelPopup_Click(object sender, EventArgs e)
