@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pbicon = new System.Windows.Forms.PictureBox();
             this.lbl1 = new System.Windows.Forms.Label();
             this.lbl2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -36,19 +35,9 @@
             this.btnDonate = new System.Windows.Forms.Button();
             this.btnUpdates = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.pbicon = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbicon)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pbicon
-            // 
-            this.pbicon.Image = global::Musix.Assets.Musix_Main_BDROP1;
-            this.pbicon.Location = new System.Drawing.Point(388, 0);
-            this.pbicon.Name = "pbicon";
-            this.pbicon.Size = new System.Drawing.Size(231, 238);
-            this.pbicon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pbicon.TabIndex = 0;
-            this.pbicon.TabStop = false;
-            this.pbicon.Tag = "C";
             // 
             // lbl1
             // 
@@ -70,7 +59,7 @@
             this.lbl2.Size = new System.Drawing.Size(219, 25);
             this.lbl2.TabIndex = 2;
             this.lbl2.Tag = "C";
-            this.lbl2.Text = "Windows Client v0.1a";
+            this.lbl2.Text = "Windows Client v0.5a";
             // 
             // label1
             // 
@@ -129,6 +118,17 @@
             this.label2.TabIndex = 7;
             this.label2.Tag = "C";
             this.label2.Text = "By ShimmyMySherbet";
+            // 
+            // pbicon
+            // 
+            this.pbicon.Image = global::Musix.Assets.Musix_Main_BDROP1;
+            this.pbicon.Location = new System.Drawing.Point(388, 0);
+            this.pbicon.Name = "pbicon";
+            this.pbicon.Size = new System.Drawing.Size(231, 238);
+            this.pbicon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbicon.TabIndex = 0;
+            this.pbicon.TabStop = false;
+            this.pbicon.Tag = "C";
             // 
             // CreditsPage
             // 

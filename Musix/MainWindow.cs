@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Musix.Controls.MenuItems;
 using Musix.Core.Client;
-using Musix.Core.Models;
+using Musix.Managers;
 using Musix.Models;
 using Musix.Windows.API.Attributes;
 using Musix.Windows.API.Interfaces;
@@ -22,19 +22,67 @@ namespace Musix
         public static MainWindow Instance;
         public Dictionary<Type, IMusixMenuItem> MenuItems = new Dictionary<Type, IMusixMenuItem>();
         public IDependancyAssetCache<Image, object, string> UIAssetCache = new MusixUIAssetCache();
+        public Dictionary<string, IMusixPluginEntryPoint> Plugins = new Dictionary<string, IMusixPluginEntryPoint>();
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
             Instance = this;
+            DateTime Started = DateTime.Now;
             FileInfo AppBaseInfo = new FileInfo(Application.ExecutablePath);
             Environment.CurrentDirectory = AppBaseInfo.DirectoryName;
+            ConfigManager.Init();
+
             CheckFolders();
+
+            DateTime PStarted = DateTime.Now;
+            foreach (string PluginFile in Directory.GetFiles("Plugins", "*.dll"))
+            {
+                FileInfo info = new FileInfo(PluginFile);
+                try
+                {
+                    Console.WriteLine($"Loading plugin {info.Name}...");
+                    List<string> Deps = new List<string>();
+                    if (Directory.Exists(Path.Combine("Plugins", info.Name)))
+                    {
+                        foreach (string Dependancy in Directory.GetFiles(Path.Combine("Plugins", info.Name), "*.dll"))
+                        {
+                            Deps.Add(Dependancy);
+                        }
+                    }
+                    Console.WriteLine($"Loading {Deps.Count} dependancies for plugin {info.Name}...");
+                    Deps.ForEach(x => Assembly.LoadFrom(x));
+
+                    Assembly Plugin = Assembly.LoadFrom(PluginFile);
+                    foreach (Type t in Plugin.GetTypes())
+                    {
+                        if (typeof(IMusixPluginEntryPoint).IsAssignableFrom(t))
+                        {
+                            Console.WriteLine($"Initializing plugin {info.Name}...");
+                            IMusixPluginEntryPoint entryPoint = ((IMusixPluginEntryPoint)Activator.CreateInstance(t));
+                            entryPoint.Load();
+                            Plugins.Add(entryPoint.Name, entryPoint);
+                            Console.WriteLine($"Initialized plugin {entryPoint.Name}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to load plugin {info.Name}; {ex.Message}");
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            Console.WriteLine($"[Plugins Loaded] took {Math.Round(DateTime.Now.Subtract(PStarted).TotalMilliseconds),2} millisecond/s.");
+
+
             Client = new MusixClient("955b354ccd0e4270b6ad97f8b4003d9a", "5a008b85c33b499da7857fbdf05f08ef", "ImageCache", "AudioCache");
             Client.OnClientReady += Client_OnClientReady;
             Client.StartClient();
 
+            AcceptButton = new Button();
+
             Activated += MainWindow_Activated;
             Deactivate += MainWindow_Deactivate;
+            ((Button)AcceptButton).Click += BtnAccept_Click;
 
             MenuItems.Add(typeof(SearchMenuItem), new SearchMenuItem());
             MenuItems.Add(typeof(DownloadsMenuItem), new DownloadsMenuItem());
@@ -56,7 +104,6 @@ namespace Musix
                 }
             }
 
-
             foreach (var item in MenuItems)
             {
                 if (Attribute.GetCustomAttribute(item.Value.GetType(), typeof(AutoInitialize)) != null)
@@ -75,9 +122,20 @@ namespace Musix
 
             MDSSideBar.SelectItemAtIndex(0);
             SendStyle(EStyle.Blue);
+
+            DateTime Finished = DateTime.Now;
+
+            Console.WriteLine($"[Initialized] took {Math.Round(Finished.Subtract(Started).TotalMilliseconds), 3} millisecond/s.");
+
         }
 
-  
+        private void BtnAccept_Click(object sender, EventArgs e)
+        {
+            if (SelectedPage != null && typeof(IAcceptListener).IsAssignableFrom(SelectedPage.GetType()))
+            {
+                ((IAcceptListener)SelectedPage).OnPageAccept();
+            }
+        }
 
         public Control SelectedPage
         {
@@ -117,7 +175,6 @@ namespace Musix
 
         public void ChangePage(Control page)
         {
-
             foreach (Control pn in PNContent.Controls)
             {
                 pn.Visible = false;
@@ -196,6 +253,7 @@ namespace Musix
             if (!Directory.Exists("ImageCache")) Directory.CreateDirectory("ImageCache");
             if (!Directory.Exists("AudioCache")) Directory.CreateDirectory("AudioCache");
             if (!Directory.Exists("Music")) Directory.CreateDirectory("Music");
+            if (!Directory.Exists("Plugins")) Directory.CreateDirectory("Plugins");
         }
 
         public MainWindow()

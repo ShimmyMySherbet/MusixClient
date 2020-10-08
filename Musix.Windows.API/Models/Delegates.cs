@@ -13,5 +13,6 @@ namespace Musix.Windows.API.Models
         public delegate void OnManualResolveCancelled();
         public delegate void OnManualResolveFinished(string SpotifyTrackID, string YoutubeTrackID);
         public delegate void OnPopupCloseRequestedArgs(object sender, EventArgs e);
+        public delegate void DragDropPopupCallback(string URL, bool Cancelled);
     }
 }

@@ -12,16 +12,50 @@ using Musix.Windows.API.Themes;
 
 namespace Musix.Controls.Pages
 {
-    public partial class SearchPage : UserControl, IStyleableControl
+    public partial class SearchPage : UserControl, IStyleableControl, IAcceptListener
     {
         public MainWindow Main;
         public TaskFactory UITaskFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
+        public bool CanDragDrop = true;
 
         public SearchPage()
         {
             InitializeComponent();
             Dock = DockStyle.Fill;
             Main = MainWindow.Instance;
+
+            FlowEntries.AllowDrop = true;
+            FlowEntries.DragEnter += FlowEntries_DragEnter;
+            FlowEntries.DragOver += FlowEntries_DragOver;
+            FlowEntries.DragDrop += FlowEntries_DragDrop;
+            FlowEntries.DragLeave += FlowEntries_DragLeave;
+        }
+
+        private void FlowEntries_DragLeave(object sender, EventArgs e)
+        {
+            CanDragDrop = true;
+        }
+
+        private void FlowEntries_DragDrop(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("DROP!");
+        }
+
+        private void FlowEntries_DragOver(object sender, DragEventArgs e)
+        {
+            if (CanDragDrop)
+            {
+                e.Effect = e.AllowedEffect;
+                MainWindow.Instance.ShowPopup(new DragDropPopup(DragDropCallback));
+            }
+        }
+
+        private void FlowEntries_DragEnter(object sender, DragEventArgs e)
+        {
+            if (CanDragDrop)
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
         }
 
         private void SearchPage_Load(object sender, EventArgs e)
@@ -29,10 +63,25 @@ namespace Musix.Controls.Pages
             FlowEntries.SizeChanged += FlowEntries_SizeChanged;
         }
 
+        public void DragDropCallback(string URL, bool Cancelled)
+        {
+            CanDragDrop = false;
+            if (!Cancelled && !string.IsNullOrEmpty(URL))
+            {
+                txtSearch.Text = URL;
+                TriggerSearch();
+            }
+        }
+
         private void FlowEntries_SizeChanged(object sender, EventArgs e)
         {
             foreach (Control ct in FlowEntries.Controls)
                 ct.Width = (FlowEntries.Width - 13);
+        }
+
+        public void OnPageAccept()
+        {
+            TriggerSearch();
         }
 
         private async void GetIMG(SearchEntry Ent, string URL)
@@ -49,24 +98,36 @@ namespace Musix.Controls.Pages
 
         private void pbSearch_Click(object sender, EventArgs e)
         {
-            if (txtSearch.Enabled)
+            TriggerSearch();
+        }
+
+        public void TriggerSearch()
+        {
+            UITaskFactory.StartNew(() =>
             {
-                txtSearch.Enabled = false;
-                new Thread(() => RunSearch(txtSearch.Text, true)).Start();
-            }
+                if (txtSearch.Enabled)
+                {
+                    txtSearch.Enabled = false;
+                    new Thread(() => RunSearch(txtSearch.Text, true)).Start();
+                }
+            });
         }
 
         private async void RunSearch(string query, bool OpenSearchOnConplete = false)
         {
             MusixSongResult result = null;
+            string YT = "";
+            string SP = "";
             bool Passed = false;
             if (query.ToLower().Contains("spotify"))
             {
+                SP = query;
                 Console.WriteLine("Collect via spotify");
                 result = Main.Client.Collect(Main.Client.GetTrackByURL(query));
             }
             else if (query.Contains("youtu"))
             {
+                YT = query;
                 Console.WriteLine("Collect via Youtube");
                 result = await Main.Client.CollectAsync(query);
             }
@@ -85,12 +146,19 @@ namespace Musix.Controls.Pages
             }
             else
             {
-                await UITaskFactory.StartNew(() => lblCFail.Visible = true);
-                new Thread(() =>
+                if (YT.Length != 0 && SP.Length != 0)
                 {
-                    Thread.Sleep(1000);
-                    UITaskFactory.StartNew(() => lblCFail.Visible = false);
-                }).Start();
+                    MainWindow.Instance.ShowPopup(new ManualResolvePopup(YT, SP, onMaualPromptCancelled, onManualPrompt));
+                }
+                else
+                {
+                    await UITaskFactory.StartNew(() => lblCFail.Visible = true);
+                    new Thread(() =>
+                    {
+                        Thread.Sleep(1000);
+                        UITaskFactory.StartNew(() => lblCFail.Visible = false);
+                    }).Start();
+                }
             }
             if (OpenSearchOnConplete)
             {
@@ -141,17 +209,16 @@ namespace Musix.Controls.Pages
             ManualResolvePopup popup = new ManualResolvePopup("", "", onMaualPromptCancelled, onManualPrompt);
             MainWindow.Instance.ShowPopup(popup);
         }
-        private void onMaualPromptCancelled() 
+
+        private void onMaualPromptCancelled()
         {
             Console.WriteLine("popup cancelled");
         }
 
-
         private async void onManualPrompt(string SpotifyTrackID, string YoutubeTrackID)
         {
-            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(new YoutubeExplode.Videos.VideoId(YoutubeTrackID))};
+            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(new YoutubeExplode.Videos.VideoId(YoutubeTrackID)) };
             AddMusixEntry(result);
         }
-
     }
 }

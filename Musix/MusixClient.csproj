@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Musix_Icon_Blue.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AngleSharp, Version=0.14.0.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>..\packages\AngleSharp.0.14.0\lib\net472\AngleSharp.dll</HintPath>
@@ -130,6 +133,9 @@
     <Compile Include="Controls\ActiveDownloadControl.Designer.cs">
       <DependentUpon>ActiveDownloadControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DownloadHistorySeparator.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MenuItems\DownloadsMenuItem.cs" />
     <Compile Include="Controls\MenuItems\InfoPage.cs" />
     <Compile Include="Controls\PanelPopup.cs">
@@ -182,6 +188,12 @@
     <Compile Include="Controls\Pages\SettingsPage.Designer.cs">
       <DependentUpon>SettingsPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Popups\DragDropPopup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Popups\DragDropPopup.Designer.cs">
+      <DependentUpon>DragDropPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Popups\ManualResolvePopup.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -206,18 +218,25 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Managers\ConfigManager.cs" />
     <Compile Include="Managers\DownloadsManager.cs" />
     <Compile Include="Models\DownloadCountIconRenderer.cs" />
-    <Compile Include="Models\DownloadStatusIconProvider.cs" />
-    <Compile Include="Models\EAsset.cs" />
-    <Compile Include="Models\EAssetModifier.cs" />
-    <Compile Include="Models\EMenuPage.cs" />
-    <Compile Include="Models\EStyle.cs" />
+    <Compile Include="Models\JsonProviderEntity.cs" />
+    <Compile Include="Models\JsonProviderModel.cs" />
+    <Compile Include="Models\Modules\DownloadStatusIconProvider.cs" />
+    <Compile Include="Models\Enums\EAsset.cs" />
+    <Compile Include="Models\Enums\EAssetModifier.cs" />
+    <Compile Include="Models\Enums\EMenuPage.cs" />
+    <Compile Include="Models\Enums\EStyle.cs" />
     <Compile Include="Models\extensions.cs" />
-    <Compile Include="Models\IAssetCache.cs" />
-    <Compile Include="Models\IStyleableControl.cs" />
+    <Compile Include="Models\Interfaces\IAssetCache.cs" />
+    <Compile Include="Models\Interfaces\IStyleableControl.cs" />
+    <Compile Include="Models\Modules\JsonConfigurationProvider.cs" />
+    <Compile Include="Models\Modules\JsonConfigurator.cs" />
+    <Compile Include="Models\Modules\JsonConfiguratorFactory.cs" />
     <Compile Include="Models\MusixAssetCache.cs" />
     <Compile Include="Models\MusixAssetItem.cs" />
+    <Compile Include="Models\MusixConfig.cs" />
     <Compile Include="Models\MusixUIAssetCache.cs" />
     <Compile Include="Models\MusixUIManager.cs" />
     <Compile Include="Program.cs" />
@@ -255,6 +274,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Pages\SettingsPage.resx">
       <DependentUpon>SettingsPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Popups\DragDropPopup.resx">
+      <DependentUpon>DragDropPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Popups\ManualResolvePopup.resx">
       <DependentUpon>ManualResolvePopup.cs</DependentUpon>
@@ -369,6 +391,9 @@
       <Project>{02c6973f-997a-4a89-b8d0-d93be4f0452c}</Project>
       <Name>Musix.Windows.API</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Musix_Icon_Blue.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NAudio.Lame.1.1.5\build\NAudio.Lame.targets" Condition="Exists('..\packages\NAudio.Lame.1.1.5\build\NAudio.Lame.targets')" />
