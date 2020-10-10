@@ -40,7 +40,7 @@ Currently on Hiatus
 Currently on Hiatus, will likely be a command-line tool similar to the current Musix.Console development tool.
 
 ### Official Plugins
-Planned Plugins:
+In Active Development:
 * Musix Sync: A plugin to remotely sync your downloaded music to an Android device.
 
 
