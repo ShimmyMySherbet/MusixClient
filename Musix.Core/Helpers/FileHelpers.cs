@@ -9,7 +9,7 @@ namespace Musix.Core.Helpers
 {
     public static class FileHelpers
     {
-        public static char[] ForbiddenCharacters = { '*', '"', '/', '\\', '[', ']', ':', ';', '|', ',' };
+        public static char[] ForbiddenCharacters = { '*', '"', '/', '\\', '[', ']', ':', ';', '|', ',', '?' };
         public static string ScrubFileName(string Filename)
         {
             foreach(char cha in ForbiddenCharacters)

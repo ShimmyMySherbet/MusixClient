@@ -146,7 +146,8 @@ namespace Musix.Controls.Pages
             }
             else
             {
-                if (YT.Length != 0 && SP.Length != 0)
+                Console.WriteLine("FAILED!");
+                if (YT.Length != 0 || SP.Length != 0)
                 {
                     MainWindow.Instance.ShowPopup(new ManualResolvePopup(YT, SP, onMaualPromptCancelled, onManualPrompt));
                 }
