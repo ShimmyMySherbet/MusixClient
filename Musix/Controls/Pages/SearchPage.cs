@@ -149,7 +149,9 @@ namespace Musix.Controls.Pages
                 Console.WriteLine("FAILED!");
                 if (YT.Length != 0 || SP.Length != 0)
                 {
-                    MainWindow.Instance.ShowPopup(new ManualResolvePopup(YT, SP, onMaualPromptCancelled, onManualPrompt));
+                  await  UITaskFactory.StartNew(() => MainWindow.Instance.ShowPopup(new ManualResolvePopup(YT, SP, onMaualPromptCancelled, onManualPrompt)));
+
+                    //MainWindow.Instance.ShowPopup(new ManualResolvePopup(YT, SP, onMaualPromptCancelled, onManualPrompt));
                 }
                 else
                 {
