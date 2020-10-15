@@ -23,6 +23,7 @@ namespace Musix
         public Dictionary<Type, IMusixMenuItem> MenuItems = new Dictionary<Type, IMusixMenuItem>();
         public IDependancyAssetCache<Image, object, string> UIAssetCache = new MusixUIAssetCache();
         public Dictionary<string, IMusixPlugin> Plugins = new Dictionary<string, IMusixPlugin>();
+        public Dictionary<string, Assembly> PluginDependancies = new Dictionary<string, Assembly>(StringComparer.InvariantCultureIgnoreCase);
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
@@ -31,8 +32,9 @@ namespace Musix
             FileInfo AppBaseInfo = new FileInfo(Application.ExecutablePath);
             Environment.CurrentDirectory = AppBaseInfo.DirectoryName;
             ConfigManager.Init();
-
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             CheckFolders();
+            FormClosing += MainWindow_FormClosing;
 
             DateTime PStarted = DateTime.Now;
             foreach (string PluginFile in Directory.GetFiles("Plugins", "*.dll"))
@@ -41,21 +43,29 @@ namespace Musix
                 try
                 {
                     string SName = info.Name.Substring(0, info.Name.Length - info.Extension.Length);
+                    Console.WriteLine($">{SName}");
                     Console.WriteLine($"Loading plugin {SName}...");
                     List<string> Deps = new List<string>();
                     if (Directory.Exists(Path.Combine("Plugins", SName)))
                     {
-                        foreach (string Dependancy in Directory.GetFiles(Path.Combine("Plugins", info.Name), "*.dll"))
+                        foreach (string Dependancy in Directory.GetFiles(Path.Combine("Plugins", SName), "*.dll"))
                         {
+                            Console.WriteLine($">{Dependancy}");
                             Deps.Add(Dependancy);
                         }
                     }
+                    Console.WriteLine($"Discovered {Deps.Count} dependancies");
                     Console.WriteLine($"Loading {Deps.Count} dependancies for plugin {info.Name}...");
                     foreach(string asm in Deps)
                     {
-                        AppDomain.CurrentDomain.Load(File.ReadAllBytes(asm));
+                        Assembly asmb = Assembly.LoadFrom(asm);
+                        if (!PluginDependancies.ContainsKey(asmb.FullName))
+                        {
+                            PluginDependancies.Add(asmb.FullName, asmb);
+ AppDomain.CurrentDomain.Load(File.ReadAllBytes(asm));
+                        }
                     }
-
+                    Console.WriteLine($"Loaded {Deps.Count} for plugin {SName}");
                     Assembly Plugin = Assembly.LoadFrom(PluginFile);
                     foreach (Type t in Plugin.GetTypes())
                     {
@@ -73,6 +83,7 @@ namespace Musix
                 {
                     Console.WriteLine($"Failed to load plugin {info.Name}; {ex.Message}");
                     Console.WriteLine(ex.Message);
+                    throw;
                 }
             }
             Console.WriteLine($"[Plugins Loaded] took {Math.Round(DateTime.Now.Subtract(PStarted).TotalMilliseconds),2} millisecond/s.");
@@ -131,6 +142,27 @@ namespace Musix
 
             Console.WriteLine($"[Initialized] took {Math.Round(Finished.Subtract(Started).TotalMilliseconds), 3} millisecond/s.");
 
+        }
+
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach(var pl in Plugins)
+            {
+                pl.Value.Unload();
+            }
+        }
+
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            Console.WriteLine($"Request {args.Name}");
+            foreach(var dep in PluginDependancies)
+            {
+                if (string.Equals(args.Name, dep.Key, StringComparison.InvariantCultureIgnoreCase)) {
+                    return dep.Value;
+                }
+            }
+            Console.WriteLine($"Failed to find {args.Name}");
+            return null;
         }
 
         private void BtnAccept_Click(object sender, EventArgs e)
