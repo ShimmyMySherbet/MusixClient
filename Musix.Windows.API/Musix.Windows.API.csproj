@@ -50,7 +50,7 @@
     <Compile Include="Interfaces\IConfigurator.cs" />
     <Compile Include="Interfaces\IConfiguratorFactory.cs" />
     <Compile Include="Interfaces\IDependancyAssetCache.cs" />
-    <Compile Include="Interfaces\IMusixPluginEntryPoint.cs" />
+    <Compile Include="Interfaces\IMusixPlugin.cs" />
     <Compile Include="Interfaces\IPopupItem.cs" />
     <Compile Include="Interfaces\IStatusIconProvider.cs" />
     <Compile Include="Interfaces\IMenuItem.cs" />

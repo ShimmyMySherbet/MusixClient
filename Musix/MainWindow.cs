@@ -22,7 +22,7 @@ namespace Musix
         public static MainWindow Instance;
         public Dictionary<Type, IMusixMenuItem> MenuItems = new Dictionary<Type, IMusixMenuItem>();
         public IDependancyAssetCache<Image, object, string> UIAssetCache = new MusixUIAssetCache();
-        public Dictionary<string, IMusixPluginEntryPoint> Plugins = new Dictionary<string, IMusixPluginEntryPoint>();
+        public Dictionary<string, IMusixPlugin> Plugins = new Dictionary<string, IMusixPlugin>();
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
@@ -40,9 +40,10 @@ namespace Musix
                 FileInfo info = new FileInfo(PluginFile);
                 try
                 {
-                    Console.WriteLine($"Loading plugin {info.Name}...");
+                    string SName = info.Name.Substring(0, info.Name.Length - info.Extension.Length);
+                    Console.WriteLine($"Loading plugin {SName}...");
                     List<string> Deps = new List<string>();
-                    if (Directory.Exists(Path.Combine("Plugins", info.Name)))
+                    if (Directory.Exists(Path.Combine("Plugins", SName)))
                     {
                         foreach (string Dependancy in Directory.GetFiles(Path.Combine("Plugins", info.Name), "*.dll"))
                         {
@@ -50,15 +51,18 @@ namespace Musix
                         }
                     }
                     Console.WriteLine($"Loading {Deps.Count} dependancies for plugin {info.Name}...");
-                    Deps.ForEach(x => Assembly.LoadFrom(x));
+                    foreach(string asm in Deps)
+                    {
+                        AppDomain.CurrentDomain.Load(File.ReadAllBytes(asm));
+                    }
 
                     Assembly Plugin = Assembly.LoadFrom(PluginFile);
                     foreach (Type t in Plugin.GetTypes())
                     {
-                        if (typeof(IMusixPluginEntryPoint).IsAssignableFrom(t))
+                        if (typeof(IMusixPlugin).IsAssignableFrom(t))
                         {
                             Console.WriteLine($"Initializing plugin {info.Name}...");
-                            IMusixPluginEntryPoint entryPoint = ((IMusixPluginEntryPoint)Activator.CreateInstance(t));
+                            IMusixPlugin entryPoint = ((IMusixPlugin)Activator.CreateInstance(t));
                             entryPoint.Load();
                             Plugins.Add(entryPoint.Name, entryPoint);
                             Console.WriteLine($"Initialized plugin {entryPoint.Name}");
