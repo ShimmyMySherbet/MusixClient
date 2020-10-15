@@ -19,6 +19,8 @@ Current features:
 
 Planned features:
 * Lyric embedding from Genius
+* In-App plugin downloader/manager
+* Musix Plugin Packer
 
 
 ### Musix Client for Windows
@@ -40,8 +42,8 @@ Currently on Hiatus
 Currently on Hiatus, will likely be a command-line tool similar to the current Musix.Console development tool.
 
 ### Official Plugins
-On Hold:
-* Musix Sync: A plugin to remotely sync your downloaded music to an Android device.
+Completed:
+* <a href="https://github.com/ShimmyMySherbet/MusixSync">Musix Sync</a>: A plugin to remotely sync your downloaded music to an Android device.
 
 
 This is the successor to my old 'YoutubeDownloder' project.
