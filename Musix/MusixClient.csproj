@@ -45,6 +45,9 @@
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.1\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Musix.PackedPlugins">
+      <HintPath>..\..\MusixPluginPacker\Musix.PackedPlugins\bin\Debug\netstandard2.0\Musix.PackedPlugins.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
@@ -149,9 +152,8 @@
       <HintPath>..\packages\Xabe.FFmpeg.4.1.1\lib\netstandard2.0\Xabe.FFmpeg.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="YoutubeExplode, Version=5.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YoutubeExplode.5.1.7\lib\net461\YoutubeExplode.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="YoutubeExplode, Version=5.1.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YoutubeExplode.5.1.6\lib\net461\YoutubeExplode.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

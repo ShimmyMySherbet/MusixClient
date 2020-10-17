@@ -9,6 +9,7 @@ using Musix.Controls.MenuItems;
 using Musix.Core.Client;
 using Musix.Managers;
 using Musix.Models;
+using Musix.PackedPlugins.Models;
 using Musix.Windows.API.Attributes;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
@@ -56,13 +57,13 @@ namespace Musix
                     }
                     Console.WriteLine($"Discovered {Deps.Count} dependancies");
                     Console.WriteLine($"Loading {Deps.Count} dependancies for plugin {info.Name}...");
-                    foreach(string asm in Deps)
+                    foreach (string asm in Deps)
                     {
                         Assembly asmb = Assembly.LoadFrom(asm);
                         if (!PluginDependancies.ContainsKey(asmb.FullName))
                         {
                             PluginDependancies.Add(asmb.FullName, asmb);
- AppDomain.CurrentDomain.Load(File.ReadAllBytes(asm));
+                            AppDomain.CurrentDomain.Load(File.ReadAllBytes(asm));
                         }
                     }
                     Console.WriteLine($"Loaded {Deps.Count} for plugin {SName}");
@@ -86,8 +87,38 @@ namespace Musix
                     throw;
                 }
             }
-            Console.WriteLine($"[Plugins Loaded] took {Math.Round(DateTime.Now.Subtract(PStarted).TotalMilliseconds),2} millisecond/s.");
+            Console.WriteLine("[PluginLoader] loading packed plugins");
 
+            foreach (string PackedPluginFile in Directory.GetFiles("Plugins", "*.mxpl").Concat(Directory.GetFiles("Plugins", "*.musixplugin")))
+            {
+                PackedPlugin plugin = PackedPlugin.LoadFrom(File.OpenRead(PackedPluginFile));
+                Console.WriteLine($"Loading packed plugin: {plugin.PluginName} by {plugin.AuthorName}");
+                foreach (Assembly LoadedDep in plugin.LoadDependancies())
+                {
+                    if (!PluginDependancies.ContainsKey(LoadedDep.FullName))
+                    {
+                        PluginDependancies.Add(LoadedDep.FullName, LoadedDep);
+                    }
+                }
+                Assembly[] Deps = plugin.LoadDependancies();
+                Console.WriteLine($"Loaded {Deps.Length} dependencies for plugin {plugin.PluginName}");
+
+                Assembly Plugin = plugin.LoadPlugin();
+
+                foreach (Type t in Plugin.GetTypes())
+                {
+                    if (typeof(IMusixPlugin).IsAssignableFrom(t))
+                    {
+                        Console.WriteLine($"Initializing plugin {plugin.PluginName}...");
+                        IMusixPlugin entryPoint = ((IMusixPlugin)Activator.CreateInstance(t));
+                        entryPoint.Load();
+                        Plugins.Add(entryPoint.Name, entryPoint);
+                        Console.WriteLine($"Initialized plugin {entryPoint.Name}");
+                    }
+                }
+            }
+
+            Console.WriteLine($"[Plugins Loaded] took {Math.Round(DateTime.Now.Subtract(PStarted).TotalMilliseconds),2} millisecond/s.");
 
             Client = new MusixClient("955b354ccd0e4270b6ad97f8b4003d9a", "5a008b85c33b499da7857fbdf05f08ef", "ImageCache", "AudioCache");
             Client.OnClientReady += Client_OnClientReady;
@@ -140,13 +171,12 @@ namespace Musix
 
             DateTime Finished = DateTime.Now;
 
-            Console.WriteLine($"[Initialized] took {Math.Round(Finished.Subtract(Started).TotalMilliseconds), 3} millisecond/s.");
-
+            Console.WriteLine($"[Initialized] took {Math.Round(Finished.Subtract(Started).TotalMilliseconds),3} millisecond/s.");
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            foreach(var pl in Plugins)
+            foreach (var pl in Plugins)
             {
                 pl.Value.Unload();
             }
@@ -155,9 +185,10 @@ namespace Musix
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             Console.WriteLine($"Request {args.Name}");
-            foreach(var dep in PluginDependancies)
+            foreach (var dep in PluginDependancies)
             {
-                if (string.Equals(args.Name, dep.Key, StringComparison.InvariantCultureIgnoreCase)) {
+                if (string.Equals(args.Name, dep.Key, StringComparison.InvariantCultureIgnoreCase))
+                {
                     return dep.Value;
                 }
             }
