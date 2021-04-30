@@ -11,6 +11,7 @@ using Musix.Core.Components.Providers;
 using Musix.Core.Helpers;
 using Musix.Core.Models;
 using Musix.Core.Models.Debug;
+using Musix.Core.Models.Interfaces;
 using Musix.Core.Modules;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
@@ -32,6 +33,7 @@ namespace Musix.Core.Client
         public string AudioCache;
         public IConversionProvider ConversionsProvider;
         public IDetailsExtrapolator DetailsExtrapolator;
+        public IMusixCollector Collector;
         private Token SpotifyToken;
 
         public Delegates.DownloadProgressChangedCallback ProgressChangedCallback;
@@ -79,6 +81,23 @@ namespace Musix.Core.Client
             if (Tracks.Tracks.Items.Count >= 1)
             {
                 return Collect(Tracks.Tracks.Items[0]);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        public async Task<MusixSongResult> CollectByNameAsync(string Term)
+        {
+            var SW = new StopWatch();
+            var Tracks = Spotify.SearchItems(Term, SpotifyAPI.Web.Enums.SearchType.Track, 2);
+            SW.PrintDur("Spotify Search");
+            if (Tracks.HasError()) return null;
+            if (Tracks.Tracks.Items.Count >= 1)
+            {
+                return await CollectAsync(Tracks.Tracks.Items[0]);
             }
             else
             {
@@ -207,10 +226,7 @@ namespace Musix.Core.Client
 
         private void TryCallback(int step, int max, string status, MusixSongResult download)
         {
-            if (ProgressChangedCallback != null)
-            {
-                ProgressChangedCallback(step, max, status, download);
-            }
+            ProgressChangedCallback?.Invoke(step, max, status, download);
         }
 
         public async Task DownloadTrack(MusixSongResult Track, string OutputDirectory, AudioEffectStack Effects = null, CancellationToken cancellationToken = default)

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lblTrackName = new System.Windows.Forms.Label();
             this.lblAlbum = new System.Windows.Forms.Label();
             this.lblArtist = new System.Windows.Forms.Label();
@@ -37,12 +38,15 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pbDownload = new System.Windows.Forms.PictureBox();
             this.pbArtwork = new System.Windows.Forms.PictureBox();
+            this.contextEntry = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnTrim = new System.Windows.Forms.ToolStripMenuItem();
             this.FlowIcons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDownload)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).BeginInit();
+            this.contextEntry.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblTrackName
@@ -138,11 +142,26 @@
             this.pbArtwork.TabIndex = 0;
             this.pbArtwork.TabStop = false;
             // 
+            // contextEntry
+            // 
+            this.contextEntry.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnTrim});
+            this.contextEntry.Name = "contextEntry";
+            this.contextEntry.Size = new System.Drawing.Size(98, 26);
+            // 
+            // btnTrim
+            // 
+            this.btnTrim.Name = "btnTrim";
+            this.btnTrim.Size = new System.Drawing.Size(180, 22);
+            this.btnTrim.Text = "Trim";
+            this.btnTrim.Click += new System.EventHandler(this.btnTrim_Click);
+            // 
             // SearchEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(39)))), ((int)(((byte)(42)))));
+            this.ContextMenuStrip = this.contextEntry;
             this.Controls.Add(this.FlowIcons);
             this.Controls.Add(this.pbDownload);
             this.Controls.Add(this.lblArtist);
@@ -159,6 +178,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbDownload)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbArtwork)).EndInit();
+            this.contextEntry.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -174,5 +194,7 @@
         public System.Windows.Forms.Label lblTrackName;
         public System.Windows.Forms.Label lblAlbum;
         public System.Windows.Forms.Label lblArtist;
+        private System.Windows.Forms.ContextMenuStrip contextEntry;
+        private System.Windows.Forms.ToolStripMenuItem btnTrim;
     }
 }

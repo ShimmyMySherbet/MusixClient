@@ -18,7 +18,7 @@ namespace Musix.Controls
         public TaskScheduler TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
         public TaskFactory UITaskFactory;
         public MusixSongResult Result;
-
+        public AudioEffectStack AudioEffects = new AudioEffectStack();
         public SearchEntry()
         {
             InitializeComponent();
@@ -27,6 +27,7 @@ namespace Musix.Controls
         public SearchEntry(MusixSongResult result)
         {
             InitializeComponent();
+            AudioEffects.AddEffect(new AudioNormalizer());
             Result = result;
             UITaskFactory = new TaskFactory(TaskScheduler);
             lblTrackName.Text = result.SpotifyTrack.Name;
@@ -96,11 +97,18 @@ namespace Musix.Controls
         {
             CancellationTokenSource source = new CancellationTokenSource();
             DownloadsManager.RegisterDownload(Result, source);
-            AudioEffectStack stack = new AudioEffectStack();
-            stack.AddEffect(new AudioNormalizer());
-            await MainWindow.Instance.Client.DownloadTrack(Result, "Music", stack, source.Token);
+            await MainWindow.Instance.Client.DownloadTrack(Result, "Music", AudioEffects, source.Token);
             DownloadsManager.TryReleaseDownload(Result);
         }
 
+        private void btnTrim_Click(object sender, EventArgs e)
+        {
+            MainWindow.Instance.ShowPopup(new TrimTrackPopup(TrimCallback));
+        }
+        private void TrimCallback(AudioTrimmer trimmer)
+        {
+            AudioEffects.RemoveEffectsOfType<AudioTrimmer>();
+            AudioEffects.AddEffect(trimmer, 0);
+        }
     }
 }

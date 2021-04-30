@@ -65,7 +65,7 @@ namespace Musix.Controls.Pages
 
         public void DragDropCallback(string URL, bool Cancelled)
         {
-            CanDragDrop = false;
+            CanDragDrop = true;
             if (!Cancelled && !string.IsNullOrEmpty(URL))
             {
                 txtSearch.Text = URL;

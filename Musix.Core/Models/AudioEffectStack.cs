@@ -53,11 +53,7 @@ namespace Musix.Core.Models
 
         public void RemoveEffectsOfType<T>()
         {
-            var copy = Effects.ToArray();
-            foreach (var ent in copy)
-            {
-                if (ent.GetType() == typeof(T)) Effects.Remove(ent);
-            }
+            Effects.RemoveAll(x => x is T);
         }
 
         public int EffectCount
