@@ -5,7 +5,7 @@ namespace Musix.Core.Abstractions
 {
     public interface IAudioProvider
     {
-        Task<bool> SourceAudio(DownloadContext context);
+        Task<IAudioSource> GetAudioSource(DownloadContext context, ETranscoderPreferance preferance);
 
         void RegisterAudioSource(IAudioSource source);
 

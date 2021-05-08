@@ -10,5 +10,7 @@ namespace Musix.Core.Models
     public class DownloadContext
     {
         public IMetaIndex MetaIndex;
+        public string InitialMeta;
+        public ETranscoderPreferance TranscoderPreferance = ETranscoderPreferance.None;
     }
 }

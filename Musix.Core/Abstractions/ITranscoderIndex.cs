@@ -1,14 +1,12 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Musix.Core.Models;
+﻿using Musix.Core.Models;
 
 namespace Musix.Core.Abstractions
 {
     public interface ITranscoderIndex
     {
-        Task<bool> Transcode(string sourceFormat, string targetFormat, Stream input, Stream output, DownloadContext context);
+        ITranscoder FindTranscoder(string inputFormat, string outputFormat, ETranscoderPreferance preferance);
 
-        bool CanTranscode(string sourceFormat, string targetFormat, DownloadContext context);
+        bool CanTranscode(string sourceFormat, string targetFormat, ETranscoderPreferance preferance, DownloadContext context);
 
         void RegisterTranscoder(ITranscoder transcoder);
 
