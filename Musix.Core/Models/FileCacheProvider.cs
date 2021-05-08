@@ -63,5 +63,10 @@ namespace Musix.Core.Models
                 cacheInstance?.Dispose();
             }
         }
+
+        public ICacheShard CreateShard()
+        {
+            return new FileCacheShard(this, $"Asset_{DateTime.Now.Ticks}");
+        }
     }
 }

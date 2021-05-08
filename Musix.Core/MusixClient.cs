@@ -14,6 +14,7 @@ namespace Musix.Core
         public ITranscoderIndex TranscoderIndex;
         public IInputMetaProvider InputMetaProvider;
         public ICacheProvider CacheProvider;
+        public IMetaDataWriter MetaWriter;
 
         /// <summary>
         /// Only needed when the cache provider doesn't support path hosting, and the selected transcoder requires a path.
@@ -61,8 +62,12 @@ namespace Musix.Core
                 preferance = download.TranscoderPreferance;
             }
 
-            using (ICachedAsset audioAsset = CacheProvider.CreateAudioCache("Download", true))
+            using (download.CacheShard = CacheProvider.CreateShard())
+            using (ICachedAsset audioAsset = download.CacheShard.CreateAsset("Audio"))
             using (Stream audioAssetStream = audioAsset.Open())
+            using (ICachedAsset resultingAudioAsset = download.CacheShard.CreateAsset("FinalAudio"))
+            using (Stream outputStream = resultingAudioAsset.Open())
+            using (TaskList tasks = new TaskList())
             {
                 IAudioSource audioSource = await AudioSource.GetAudioSource(download, preferance);
 
@@ -71,11 +76,19 @@ namespace Musix.Core
                     return false;
                 }
 
-                var res = await audioSource.DownloadAudio(download, audioAssetStream);
+                tasks.Add(audioSource.DownloadAudio(download, audioAssetStream));
+                tasks.Add(MetaWriter.PrepareAssets(download));
+
+                await tasks.WaitAll();
+
+                AudioDownloadResult res = tasks.GetResult<AudioDownloadResult>();
 
                 if (!res.Success) return false;
 
                 ITranscoder transcoder = TranscoderIndex.FindTranscoder("webm", "mp3", preferance);
+
+                await transcoder.Transcode(audioAssetStream, outputStream, download);
+                await MetaWriter.WriteMeta(outputStream, download);
             }
 
             return true;

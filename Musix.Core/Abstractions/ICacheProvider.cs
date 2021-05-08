@@ -9,5 +9,7 @@ namespace Musix.Core.Abstractions
         ICachedAsset CreateAsset(string name, bool providePath);
 
         ICachedAsset CreateAudioCache(string name, bool providePath);
+
+        ICacheShard CreateShard();
     }
 }

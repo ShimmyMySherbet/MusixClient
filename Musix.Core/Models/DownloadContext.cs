@@ -12,5 +12,6 @@ namespace Musix.Core.Models
         public IMetaIndex MetaIndex;
         public string InitialMeta;
         public ETranscoderPreferance TranscoderPreferance = ETranscoderPreferance.None;
+        public ICacheShard CacheShard;
     }
 }
