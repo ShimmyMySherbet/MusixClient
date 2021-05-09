@@ -15,6 +15,7 @@ namespace Musix.Core
         public IInputMetaProvider InputMetaProvider;
         public ICacheProvider CacheProvider;
         public IMetaDataWriter MetaWriter;
+        public IAudioEffectStack AudioEffects;
 
         /// <summary>
         /// Only needed when the cache provider doesn't support path hosting, and the selected transcoder requires a path.
@@ -41,6 +42,24 @@ namespace Musix.Core
             await Download(context);
         }
 
+        private ETranscoderPreferance GetTranscoderPreferance(DownloadContext context)
+        {
+            ETranscoderPreferance preferance;
+            if (CanProvideFileHosting)
+            {
+                preferance = ETranscoderPreferance.NoPathedOnly;
+            }
+            else if (context.TranscoderPreferance == ETranscoderPreferance.None)
+            {
+                preferance = ETranscoderPreferance.PreferNoPathed;
+            }
+            else
+            {
+                preferance = context.TranscoderPreferance;
+            }
+            return preferance;
+        }
+
         public async Task<bool> Download(DownloadContext download)
         {
             if (download.InitialMeta != null)
@@ -48,25 +67,12 @@ namespace Musix.Core
                 InputMetaProvider.DerriveMeta(download.InitialMeta, download);
             }
 
-            ETranscoderPreferance preferance;
-            if (CanProvideFileHosting)
-            {
-                preferance = ETranscoderPreferance.NoPathedOnly;
-            }
-            else if (download.TranscoderPreferance == ETranscoderPreferance.None)
-            {
-                preferance = ETranscoderPreferance.PreferNoPathed;
-            }
-            else
-            {
-                preferance = download.TranscoderPreferance;
-            }
+            ETranscoderPreferance preferance = GetTranscoderPreferance(download);
 
             using (download.CacheShard = CacheProvider.CreateShard())
             using (ICachedAsset audioAsset = download.CacheShard.CreateAsset("Audio"))
-            using (Stream audioAssetStream = audioAsset.Open())
-            using (ICachedAsset resultingAudioAsset = download.CacheShard.CreateAsset("FinalAudio"))
-            using (Stream outputStream = resultingAudioAsset.Open())
+            using (ICachedAsset transcodedAudioAsset = download.CacheShard.CreateAsset("TranscodedAudio"))
+            using (ICachedAsset audioEffects = download.CacheShard.CreateAsset("audioEffects"))
             using (TaskList tasks = new TaskList())
             {
                 IAudioSource audioSource = await AudioSource.GetAudioSource(download, preferance);
@@ -76,7 +82,7 @@ namespace Musix.Core
                     return false;
                 }
 
-                tasks.Add(audioSource.DownloadAudio(download, audioAssetStream));
+                tasks.Add(audioSource.DownloadAudio(download, audioAsset.Stream));
                 tasks.Add(MetaWriter.PrepareAssets(download));
 
                 await tasks.WaitAll();
@@ -85,10 +91,21 @@ namespace Musix.Core
 
                 if (!res.Success) return false;
 
-                ITranscoder transcoder = TranscoderIndex.FindTranscoder("webm", "mp3", preferance);
+                ITranscoder transcoder = TranscoderIndex.FindTranscoder(audioSource.OutputFormat, download.OutputFormat, preferance);
 
-                await transcoder.Transcode(audioAssetStream, outputStream, download);
-                await MetaWriter.WriteMeta(outputStream, download);
+                await transcoder.Transcode(audioAsset.Stream, transcodedAudioAsset.Stream, download);
+
+                Stream metaWrite = transcodedAudioAsset.Stream;
+
+                if (AudioEffects.Count > 0)
+                {
+                    if (await AudioEffects.ApplyEffects(transcodedAudioAsset.Stream, audioEffects.Stream, download))
+                    {
+                        metaWrite = audioEffects.Stream;
+                    }
+                }
+
+                await MetaWriter.WriteMeta(metaWrite, download);
             }
 
             return true;

@@ -8,6 +8,8 @@ namespace Musix.Core.Abstractions
     {
         string Name { get; }
 
+        string OutputFormat { get; }
+
         Task<AudioDownloadResult> DownloadAudio(DownloadContext context, Stream stream);
 
         Task<bool> VerifyAvailable(DownloadContext context);

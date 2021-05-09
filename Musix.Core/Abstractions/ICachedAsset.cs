@@ -8,6 +8,8 @@ namespace Musix.Core.Abstractions
         string Name { get; }
         string Path { get; }
 
-        Stream Open();
+        Stream Stream { get; }
+
+        void ResetPosition();
     }
 }

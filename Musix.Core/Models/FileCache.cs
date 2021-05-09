@@ -6,6 +6,7 @@ namespace Musix.Core.Models
     public class FileCache : ICachedAsset
     {
         public FileCacheProvider FileCacheProvider { get; private set; }
+
         internal FileCache(string name, string path, FileCacheProvider provider)
         {
             Name = name;
@@ -17,6 +18,20 @@ namespace Musix.Core.Models
         public string Name { get; private set; }
 
         public string Path { get; private set; }
+
+        private Stream m_Stream;
+
+        public Stream Stream
+        {
+            get
+            {
+                if (m_Stream == null)
+                {
+                    m_Stream = Open();
+                }
+                return m_Stream;
+            }
+        }
 
         public Stream Open()
         {
@@ -30,7 +45,11 @@ namespace Musix.Core.Models
                 File.Delete(Path);
                 FileCacheProvider.SendDisposed(this);
             }
-              
+        }
+
+        public void ResetPosition()
+        {
+            if (m_Stream != null) m_Stream.Position = 0;
         }
     }
 }
