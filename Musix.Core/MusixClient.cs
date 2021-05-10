@@ -104,7 +104,9 @@ namespace Musix.Core
                 }
 
                 tasks.Add(audioSource.DownloadAudio(download, audioAsset.Stream));
-                tasks.Add(m_MetaProvider.PrepareAssets(download));
+                var metaTask = m_MetaProvider.SourceMetadata(download)
+                    .ContinueWith(x => m_MetaWriter.PrepareAssets(download));
+                tasks.Add(metaTask);
 
                 await tasks.WaitAll();
 
