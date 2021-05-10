@@ -75,7 +75,7 @@ namespace Musix.Core.Models
             {
                 foreach (Task<T> task in m_Tasks.OfType<Task<T>>())
                 {
-                    if (!task.IsCanceled)
+                    if (!task.IsCanceled && task.Status == TaskStatus.RanToCompletion)
                     {
                         return task.Result;
                     }
@@ -83,6 +83,22 @@ namespace Musix.Core.Models
             }
 
             return default(T);
+        }
+        public List<T> GetResults<T>()
+        {
+            if (Locked) return new List<T>();
+            var results = new List<T>();
+            lock (m_Tasks)
+            {
+                foreach (Task<T> task in m_Tasks.OfType<Task<T>>())
+                {
+                    if (!task.IsCanceled && task.Status == TaskStatus.RanToCompletion)
+                    {
+                        results.Add(task.Result);
+                    }
+                }
+            }
+            return results;
         }
 
         public void Dispose()

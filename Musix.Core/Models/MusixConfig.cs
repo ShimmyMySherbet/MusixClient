@@ -15,9 +15,9 @@ namespace Musix.Core.Models
         public IFileHoster FileHoster;
         public MusixConfig()
         {
-            ContextFactory = null;
+            ContextFactory = new DefaultContextFactory();
             MetaManager = null;
-            AudioSource = null;
+            AudioSource = new AudioProvider();
             TranscoderIndex = null;
             InputMetaProvider = null;
             CacheProvider = new FileCacheProvider();

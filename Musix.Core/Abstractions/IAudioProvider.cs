@@ -9,7 +9,7 @@ namespace Musix.Core.Abstractions
 
         void RegisterAudioSource(IAudioSource source);
 
-        IAudioSource EnumerateSources();
+        IAudioSource[] EnumerateSources();
 
         void DeregisterSource(IAudioSource source);
 

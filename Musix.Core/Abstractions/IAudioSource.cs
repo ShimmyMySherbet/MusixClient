@@ -12,6 +12,6 @@ namespace Musix.Core.Abstractions
 
         Task<AudioDownloadResult> DownloadAudio(DownloadContext context, Stream stream);
 
-        Task<bool> VerifyAvailable(DownloadContext context);
+        Task<AudioSourceAvailability> VerifyAvailable(DownloadContext context);
     }
 }
