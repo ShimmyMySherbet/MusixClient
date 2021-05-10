@@ -5,7 +5,7 @@ namespace Musix.Core.Models
     public class MusixConfig
     {
         public IContextFactory ContextFactory;
-        public IMetaProvider MetaManager;
+        public IMetaProvider MetaProvider;
         public IAudioProvider AudioSource;
         public ITranscoderIndex TranscoderIndex;
         public IInputMetaProvider InputMetaProvider;
@@ -16,7 +16,7 @@ namespace Musix.Core.Models
         public MusixConfig()
         {
             ContextFactory = new DefaultContextFactory();
-            MetaManager = null;
+            MetaProvider = new MetaProvider();
             AudioSource = new AudioProvider();
             TranscoderIndex = null;
             InputMetaProvider = null;

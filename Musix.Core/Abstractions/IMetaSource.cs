@@ -12,5 +12,6 @@ namespace Musix.Core.Abstractions
         string Name { get; }
 
         Task<MetadataResult> AddMetadata(DownloadContext context);
+
     }
 }

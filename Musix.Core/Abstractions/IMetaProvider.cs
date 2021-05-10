@@ -15,6 +15,5 @@ namespace Musix.Core.Abstractions
 
         void MarkSourceEnabled(IMetaSource provider, bool enabled);
 
-        Task PrepareAssets(DownloadContext context);
     }
 }

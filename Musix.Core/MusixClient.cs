@@ -29,7 +29,7 @@ namespace Musix.Core
         private void InitWithConfig(MusixConfig config)
         {
             m_ContextFactory = config.ContextFactory;
-            m_MetaProvider = config.MetaManager;
+            m_MetaProvider = config.MetaProvider;
             m_AudioSource = config.AudioSource;
             m_TranscoderIndex = config.TranscoderIndex;
             m_InputMetaProvider = config.InputMetaProvider;
