@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Musix.Core.Abstractions;
 using Musix.Core.Models;
@@ -8,37 +7,59 @@ namespace Musix.Core
 {
     public class MusixClient
     {
-        public IContextFactory ContextFactory;
-        public IMetaProvider MetaManager;
-        public IAudioProvider AudioSource;
-        public ITranscoderIndex TranscoderIndex;
-        public IInputMetaProvider InputMetaProvider;
-        public ICacheProvider CacheProvider;
-        public IMetaDataWriter MetaWriter;
-        public IAudioEffectStack AudioEffects;
+        private IContextFactory m_ContextFactory;
+        private IAudioProvider m_AudioSource;
+        private IAudioEffectStack m_AudioEffects;
+        private ITranscoderIndex m_TranscoderIndex;
+        private IInputMetaProvider m_InputMetaProvider;
+        private ICacheProvider m_CacheProvider;
+        private IMetaProvider m_MetaProvider;
+        private IMetaDataWriter m_MetaWriter;
+
+        public MusixClient(MusixConfig config)
+        {
+            InitWithConfig(config);
+        }
+
+        public MusixClient()
+        {
+            InitWithConfig(new MusixConfig());
+        }
+
+        private void InitWithConfig(MusixConfig config)
+        {
+            m_ContextFactory = config.ContextFactory;
+            m_MetaProvider = config.MetaManager;
+            m_AudioSource = config.AudioSource;
+            m_TranscoderIndex = config.TranscoderIndex;
+            m_InputMetaProvider = config.InputMetaProvider;
+            m_CacheProvider = config.CacheProvider;
+            m_MetaWriter = config.MetaWriter;
+            m_AudioEffects = config.AudioEffects;
+        }
 
         /// <summary>
         /// Only needed when the cache provider doesn't support path hosting, and the selected transcoder requires a path.
         /// </summary>
-        public IFileHoster FileHoster;
+        private IFileHoster m_FileHoster;
 
         public bool CanProvideFileHosting
         {
             get
             {
-                return FileHoster != null;
+                return m_FileHoster != null;
             }
         }
 
         public async Task Download(string input)
         {
-            DownloadContext context = ContextFactory.CreateContext(input);
+            DownloadContext context = m_ContextFactory.CreateContext(input);
             await Download(context);
         }
 
         public async Task Downlaod(string input, Dictionary<string, object> meta)
         {
-            DownloadContext context = ContextFactory.CreateContext(input, meta);
+            DownloadContext context = m_ContextFactory.CreateContext(input, meta);
             await Download(context);
         }
 
@@ -64,26 +85,26 @@ namespace Musix.Core
         {
             if (download.InitialMeta != null)
             {
-                InputMetaProvider.DerriveMeta(download.InitialMeta, download);
+                m_InputMetaProvider.DerriveMeta(download.InitialMeta, download);
             }
 
             ETranscoderPreferance preferance = GetTranscoderPreferance(download);
 
-            using (download.CacheShard = CacheProvider.CreateShard())
+            using (download.CacheShard = m_CacheProvider.CreateShard())
             using (ICachedAsset audioAsset = download.CacheShard.CreateAsset("Audio"))
             using (ICachedAsset transcodedAudioAsset = download.CacheShard.CreateAsset("TranscodedAudio"))
             using (ICachedAsset audioEffects = download.CacheShard.CreateAsset("audioEffects"))
             using (TaskList tasks = new TaskList())
             {
-                IAudioSource audioSource = await AudioSource.GetAudioSource(download, preferance);
+                IAudioSource audioSource = await m_AudioSource.GetAudioSource(download, preferance);
 
-                if (AudioSource == null)
+                if (m_AudioSource == null)
                 {
                     return false;
                 }
 
                 tasks.Add(audioSource.DownloadAudio(download, audioAsset.Stream));
-                tasks.Add(MetaWriter.PrepareAssets(download));
+                tasks.Add(m_MetaProvider.PrepareAssets(download));
 
                 await tasks.WaitAll();
 
@@ -91,21 +112,25 @@ namespace Musix.Core
 
                 if (!res.Success) return false;
 
-                ITranscoder transcoder = TranscoderIndex.FindTranscoder(audioSource.OutputFormat, download.OutputFormat, preferance);
+                ITranscoder transcoder = m_TranscoderIndex.FindTranscoder(audioSource.OutputFormat, download.OutputFormat, preferance);
 
+                audioAsset.ResetPosition();
                 await transcoder.Transcode(audioAsset.Stream, transcodedAudioAsset.Stream, download);
 
-                Stream metaWrite = transcodedAudioAsset.Stream;
+                ICachedAsset metaWrite = transcodedAudioAsset;
 
-                if (AudioEffects.Count > 0)
+                if (m_AudioEffects.Count > 0)
                 {
-                    if (await AudioEffects.ApplyEffects(transcodedAudioAsset.Stream, audioEffects.Stream, download))
+                    transcodedAudioAsset.ResetPosition();
+                    if (await m_AudioEffects.ApplyEffects(transcodedAudioAsset.Stream, audioEffects.Stream, download))
                     {
-                        metaWrite = audioEffects.Stream;
+                        metaWrite = audioEffects;
                     }
                 }
 
-                await MetaWriter.WriteMeta(metaWrite, download);
+                metaWrite.ResetPosition();
+                await m_MetaWriter.WriteMeta(metaWrite.Stream, download);
+                metaWrite.Stream.CopyTo(download.OutputStream);
             }
 
             return true;

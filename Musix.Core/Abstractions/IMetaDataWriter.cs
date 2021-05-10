@@ -6,8 +6,6 @@ namespace Musix.Core.Abstractions
 {
     public interface IMetaDataWriter
     {
-        Task PrepareAssets(DownloadContext context);
-
-        Task WriteMeta(Stream fileStream, DownloadContext context);
+        Task WriteMeta(Stream stream, DownloadContext context);
     }
 }
