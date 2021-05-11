@@ -13,17 +13,18 @@ namespace Musix.Core.Models
         public IMetaDataWriter MetaWriter;
         public IAudioEffectStack AudioEffects;
         public IFileHoster FileHoster;
-        public MusixConfig()
+
+        public MusixConfig(IMetaDataWriter metaWriter, IAudioEffectStack audioEffects = null, IFileHoster fileHoster = null)
         {
             ContextFactory = new DefaultContextFactory();
             MetaProvider = new MetaProvider();
             AudioSource = new AudioProvider();
             TranscoderIndex = new TranscoderIndex();
-            InputMetaProvider = null;
+            InputMetaProvider = new InputMetaProvider();
             CacheProvider = new FileCacheProvider();
-            MetaWriter = null;
-            AudioEffects = null;
-            FileHoster = null;
+            MetaWriter = metaWriter;
+            AudioEffects = audioEffects;
+            FileHoster = fileHoster;
         }
     }
 }
