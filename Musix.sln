@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Musix.Windows.API", "Musix.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Musix.Core", "Musix.Core\Musix.Core.csproj", "{C30C7AA4-78FD-4552-BEED-C5760C896B05}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalComponents", "ExternalComponents", "{976B1294-20A3-49DA-897D-C54D992F55DC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{976B1294-20A3-49DA-897D-C54D992F55DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Musix.HTTPHostedFiles", "Musix.HTTPHostedFiles\Musix.HTTPHostedFiles.csproj", "{E6CBEC6B-A2A8-41C1-8BD4-DD03A068736B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Musix.HTTPHostedFiles", "Musix.HTTPHostedFiles\Musix.HTTPHostedFiles.csproj", "{E6CBEC6B-A2A8-41C1-8BD4-DD03A068736B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
