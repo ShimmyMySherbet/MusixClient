@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Musix.Core.Abstractions;
-using Musix.Core.Attributes;
 
 namespace Musix.Core.Models
 {
@@ -10,11 +8,17 @@ namespace Musix.Core.Models
     {
         private List<IInputMetaParser> m_Parsers = new List<IInputMetaParser>();
 
+        public InputMetaProvider()
+        {
+            AddParser<BasicInputParser>();
+        }
+
         public void AddParser<T>() where T : IInputMetaParser
         {
             lock (m_Parsers)
             {
                 m_Parsers.Add(Activator.CreateInstance<T>());
+                m_Parsers.OrderByWeight();
             }
         }
 
@@ -23,16 +27,16 @@ namespace Musix.Core.Models
             lock (m_Parsers)
             {
                 m_Parsers.Add(parser);
-                m_Parsers.OrderByDescending(x => Weight.GetWeight(x.GetType()));
+                m_Parsers.OrderByWeight();
             }
         }
 
         public bool DerriveMeta(string input, DownloadContext context)
         {
             bool m = false;
-            lock(m_Parsers)
+            lock (m_Parsers)
             {
-                foreach(var parser in m_Parsers)
+                foreach (var parser in m_Parsers)
                 {
                     if (parser.DerriveMeta(input, context)) m = true;
                 }
@@ -42,7 +46,7 @@ namespace Musix.Core.Models
 
         public void RemoveParser(IInputMetaParser parser)
         {
-            lock(m_Parsers)
+            lock (m_Parsers)
             {
                 if (m_Parsers.Contains(parser))
                 {
@@ -53,7 +57,7 @@ namespace Musix.Core.Models
 
         public void RemoveParser<T>() where T : IInputMetaParser
         {
-            lock(m_Parsers)
+            lock (m_Parsers)
             {
                 m_Parsers.RemoveAll(x => x.GetType() == typeof(T));
             }
