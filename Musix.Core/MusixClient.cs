@@ -23,7 +23,7 @@ namespace Musix.Core
 
         public MusixClient()
         {
-            InitWithConfig(new MusixConfig());
+            InitWithConfig(new MusixConfig(null));
         }
 
         private void InitWithConfig(MusixConfig config)
@@ -114,7 +114,7 @@ namespace Musix.Core
 
                 if (!res.Success) return false;
 
-                ITranscoder transcoder = m_TranscoderIndex.FindTranscoder(audioSource.OutputFormat, download.OutputFormat, preferance);
+                ITranscoder transcoder = m_TranscoderIndex.FindTranscoder(audioSource.OutputFormat, download.OutputFormat, preferance, download);
 
                 audioAsset.ResetPosition();
                 await transcoder.Transcode(audioAsset.Stream, transcodedAudioAsset.Stream, download);
