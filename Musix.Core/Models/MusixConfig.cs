@@ -18,7 +18,7 @@ namespace Musix.Core.Models
             ContextFactory = new DefaultContextFactory();
             MetaProvider = new MetaProvider();
             AudioSource = new AudioProvider();
-            TranscoderIndex = null;
+            TranscoderIndex = new TranscoderIndex();
             InputMetaProvider = null;
             CacheProvider = new FileCacheProvider();
             MetaWriter = null;

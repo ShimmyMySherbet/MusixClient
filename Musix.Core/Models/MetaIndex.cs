@@ -7,7 +7,7 @@ namespace Musix.Core.Models
     {
         private Dictionary<string, object> m_Values = new Dictionary<string, object>();
 
-        public void Add<T>(string key, T Instance)
+        public void Set<T>(string key, T Instance)
         {
             lock (m_Values)
             {

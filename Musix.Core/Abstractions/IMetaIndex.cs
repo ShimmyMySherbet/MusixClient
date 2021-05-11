@@ -6,7 +6,7 @@
 
         string GetString(string key);
 
-        void Add<T>(string key, T Instance);
+        void Set<T>(string key, T Instance);
 
         T Get<T>(string key);
 

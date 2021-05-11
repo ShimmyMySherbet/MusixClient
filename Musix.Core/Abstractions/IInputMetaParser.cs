@@ -4,6 +4,6 @@ namespace Musix.Core.Abstractions
 {
     public interface IInputMetaParser
     {
-        void DerriveMeta(string input, DownloadContext context);
+        bool DerriveMeta(string input, DownloadContext context);
     }
 }
