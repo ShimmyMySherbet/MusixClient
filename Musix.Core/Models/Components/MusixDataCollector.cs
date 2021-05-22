@@ -8,6 +8,7 @@ using Musix.Core.Helpers;
 using Musix.Core.Models.Interfaces;
 using SpotifyAPI.Web.Models;
 using YoutubeExplode.Videos;
+using YoutubeExplode.Videos.Streams;
 
 namespace Musix.Core.Models.Components
 {
@@ -22,14 +23,23 @@ namespace Musix.Core.Models.Components
             Console.WriteLine("get id");
             var GetVid = Client.YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
             Console.WriteLine("get wait");
-            GetVid.Wait();
+            var t = new Task(async () => await GetVid);
+            t.Wait();
+
+
             Console.WriteLine("got vid");
             Video video = GetVid.Result;
             MusixSongResult Result = new MusixSongResult();
             Console.WriteLine("run extrap");
             ExtrapResult Extrap = Client.DetailsExtrapolator.ExtrapolateDetails(video.Title);
             Result.Extrap = Extrap;
-            FullTrack Track = Client.FindTrack(Extrap, video.Duration, 5000);
+            TimeSpan ts = new TimeSpan(0);
+            if (video.Duration.HasValue)
+            {
+                ts = video.Duration.Value;
+            }
+
+            FullTrack Track = Client.FindTrack(Extrap, (video.Duration.HasValue ? video.Duration.Value : TimeSpan.Zero), 5000);
             Result.HasLyrics = false;
             Result.SpotifyTrack = Track;
             Result.YoutubeVideo = video;
@@ -60,7 +70,7 @@ namespace Musix.Core.Models.Components
         {
             MusixSongResult Result = new MusixSongResult();
             ExtrapResult Extrap = Client. DetailsExtrapolator.ExtrapolateDetails(video.Title);
-            FullTrack Track = Client.FindTrack(Extrap, video.Duration, 8000);
+            FullTrack Track = Client.FindTrack(Extrap, (video.Duration.HasValue ? video.Duration.Value : TimeSpan.Zero), 8000);
             Result.Extrap = Extrap;
             Result.HasLyrics = false;
             Result.SpotifyTrack = Track;

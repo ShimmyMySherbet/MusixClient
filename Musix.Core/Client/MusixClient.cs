@@ -72,7 +72,7 @@ namespace Musix.Core.Client
             OnClientReady?.Invoke();
         }
 
-        public MusixSongResult CollectByName(string Term)
+        public async Task<MusixSongResult> CollectByName(string Term)
         {
             var SW = new StopWatch();
             var Tracks = Spotify.SearchItems(Term, SpotifyAPI.Web.Enums.SearchType.Track, 2);
@@ -80,7 +80,7 @@ namespace Musix.Core.Client
             if (Tracks.HasError()) return null;
             if (Tracks.Tracks.Items.Count >= 1)
             {
-                return Collect(Tracks.Tracks.Items[0]);
+                return await Collect(Tracks.Tracks.Items[0]);
             }
             else
             {
@@ -120,16 +120,16 @@ namespace Musix.Core.Client
             return Modified;
         }
 
-        public MusixSongResult CollectByString(string Query)
+        public async Task<MusixSongResult> CollectByString(string Query)
         {
             if (Uri.IsWellFormedUriString(Query, UriKind.RelativeOrAbsolute))
             {
                 if (Query.ToLower().Contains("youtu"))
                 {
-                    return Collect(Query);
+                    return await Collect(Query);
                 }
             }
-            return CollectByName(Query);
+            return await CollectByName(Query);
         }
 
         public FullTrack GetTrackByURL(string URL)
@@ -147,7 +147,7 @@ namespace Musix.Core.Client
         {
             MusixSongResult Result = new MusixSongResult();
             ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
-            FullTrack Track = FindTrack(Extrap, video.Duration, 8000);
+            FullTrack Track = FindTrack(Extrap, (video.Duration.HasValue ? video.Duration.Value : TimeSpan.FromSeconds(0)), 8000);
             Result.Extrap = Extrap;
             Result.HasLyrics = false;
             Result.SpotifyTrack = Track;
@@ -160,19 +160,15 @@ namespace Musix.Core.Client
             return await YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(URL));
         }
 
-        public MusixSongResult Collect(string VideoURL)
+        public async Task<MusixSongResult> Collect(string VideoURL)
         {
             Console.WriteLine("get id");
-            var GetVid = YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
-            Console.WriteLine("get wait");
-            GetVid.Wait();
-            Console.WriteLine("got vid");
-            Video video = GetVid.Result;
+            var video = await YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
             MusixSongResult Result = new MusixSongResult();
             Console.WriteLine("run extrap");
             ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
             Result.Extrap = Extrap;
-            FullTrack Track = FindTrack(Extrap, video.Duration, 5000);
+            FullTrack Track = FindTrack(Extrap, (video.Duration.HasValue ? video.Duration.Value : TimeSpan.Zero), 5000);
             Result.HasLyrics = false;
             Result.SpotifyTrack = Track;
             Result.YoutubeVideo = video;
@@ -189,7 +185,7 @@ namespace Musix.Core.Client
             Console.WriteLine("run extrap");
             ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
             Result.Extrap = Extrap;
-            FullTrack Track = FindTrack(Extrap, video.Duration, 5000);
+            FullTrack Track = FindTrack(Extrap, (video.Duration.HasValue ? video.Duration.Value : TimeSpan.Zero), 5000);
             Result.HasLyrics = false;
             Result.SpotifyTrack = Track;
             Result.YoutubeVideo = video;
@@ -197,7 +193,7 @@ namespace Musix.Core.Client
             return Result;
         }
 
-        public MusixSongResult Collect(FullTrack Track)
+        public async Task<MusixSongResult> Collect(FullTrack Track)
         {
             MusixSongResult Result = new MusixSongResult
             {
@@ -205,7 +201,7 @@ namespace Musix.Core.Client
                 Extrap = new ExtrapResult() { TrackArtist = Track.Artists[0].Name, TrackName = Track.Name, Source = $"{string.Join(", ", Track.Artists)} - {Track.Name}" }
             };
             StopWatch DD = new StopWatch();
-            Result.YoutubeVideo = YoutubeTrackFinder.FindYoutubeVideo(Track, 5000, DetailsExtrapolator);
+            Result.YoutubeVideo = await YoutubeTrackFinder.FindYoutubeVideoAsync(Track, 5000, DetailsExtrapolator);
             DD.PrintDur("Collector Youtube GetVid");
             Result.HasLyrics = false;
             return Result;
@@ -277,7 +273,7 @@ namespace Musix.Core.Client
             // Step 3
             Step++;
             TryCallback(Step, Steps, "Sorting Streams", Track);
-            List<AudioOnlyStreamInfo> AudioStreams = StreamData.GetAudioOnly().ToList();
+            List<AudioOnlyStreamInfo> AudioStreams = StreamData.GetAudioOnlyStreams().ToList();
             AudioStreams.OrderBy(dat => dat.Bitrate);
             if (AudioStreams.Count() == 0) Console.WriteLine("No Streams");
             if (AudioStreams.Count() == 0) return;
@@ -290,7 +286,22 @@ namespace Musix.Core.Client
                 return;
             }
 
-            Task AudioDownloadTask = YouTube.Videos.Streams.DownloadAsync(SelectedStream, SourceAudio);
+            //Task AudioDownloadTask = new Task(async () => await YouTube.Videos.Streams.DownloadAsync(SelectedStream, SourceAudio));
+
+            var req = WebRequest.CreateHttp(SelectedStream.Url);
+            req.Method = "GET";
+            using(var resp = req.GetResponse()) 
+                using(var network = resp.GetResponseStream())
+                using(var fs = new FileStream(SourceAudio, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            {
+                Console.WriteLine("Downloading");
+                await network.CopyToAsync(fs);
+                Console.WriteLine("flushing");
+
+                await fs.FlushAsync();
+                Console.WriteLine("done");
+
+            }
 
             WebClient WebCl = new WebClient();
 
@@ -311,22 +322,22 @@ namespace Musix.Core.Client
                 return;
             }
 
-            if (!AudioDownloadTask.IsCompleted)
-            {
-                Console.WriteLine("Waiting on artwork...");
-                CoverDownloadTask.Wait();
-            }
+            //if (!AudioDownloadTask.IsCompleted)
+            //{
+            //    Console.WriteLine("Waiting on artwork...");
+            //    CoverDownloadTask.Wait();
+            //}
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
             }
 
-            if (!AudioDownloadTask.IsCompleted)
-            {
-                Console.WriteLine("Waiting on audio...");
-                AudioDownloadTask.Wait();
-                Console.WriteLine("Download Complete.");
-            }
+            //if (!AudioDownloadTask.IsCompleted)
+            //{
+            //    Console.WriteLine("Waiting on audio...");
+            //    AudioDownloadTask.Wait();
+            //    Console.WriteLine("Download Complete.");
+            //}
             Thread.Sleep(100);
             if (cancellationToken.IsCancellationRequested)
             {

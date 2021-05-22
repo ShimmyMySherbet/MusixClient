@@ -22,7 +22,7 @@ namespace Musix.Core.Modules
                 if (SelectedResult == null && ContainsMatch(Ext.TrackName, Ext.Source, Result.Name))
                 {
                     PrintDebug("[Check] Name Passed");
-                    if (!(Math.Abs(Result.DurationMs - BaseLength.TotalMilliseconds) > MaxDeviation))
+                    if (BaseLength.TotalSeconds == 0 || !(Math.Abs(Result.DurationMs - BaseLength.TotalMilliseconds) > MaxDeviation))
                     {
                         PrintDebug("[Check] Dur Passed");
                         if (!(string.IsNullOrEmpty(Ext.TrackArtist)) &&  ContainsMatch(Ext.TrackArtist, Ext.Source, Result.Artists[0].Name))
