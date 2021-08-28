@@ -124,7 +124,7 @@ namespace Musix.Controls.Pages
             {
                 SP = query;
                 Console.WriteLine("Collect via spotify");
-                result = await Main.Client.Collect(Main.Client.GetTrackByURL(query));
+                result =  Main.Client.Collect(Main.Client.GetTrackByURL(query));
             }
             else if (query.Contains("youtu"))
             {
@@ -136,7 +136,7 @@ namespace Musix.Controls.Pages
             {
                 Console.WriteLine("Collect via Query");
 
-                result = await Main.Client.CollectByName(query);
+                result =  Main.Client.CollectByName(query);
             }
 
             if (result != null && result.HasTrack && result.HasVideo)
@@ -221,7 +221,7 @@ namespace Musix.Controls.Pages
 
         private async void onManualPrompt(string SpotifyTrackID, string YoutubeTrackID)
         {
-            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(new YoutubeExplode.Videos.VideoId(YoutubeTrackID)) };
+            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(VideoId.Parse(YoutubeTrackID)) };
             AddMusixEntry(result);
         }
     }
