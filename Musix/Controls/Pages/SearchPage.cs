@@ -9,6 +9,7 @@ using Musix.Controls.Popups;
 using Musix.Core.Models;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Themes;
+using YoutubeExplode.Videos;
 
 namespace Musix.Controls.Pages
 {
@@ -108,12 +109,12 @@ namespace Musix.Controls.Pages
                 if (txtSearch.Enabled)
                 {
                     txtSearch.Enabled = false;
-                    new Thread(() => RunSearch(txtSearch.Text, true)).Start();
+                    new Thread(async () => await RunSearch (txtSearch.Text, true)).Start();
                 }
             });
         }
 
-        private async void RunSearch(string query, bool OpenSearchOnConplete = false)
+        private async Task RunSearch(string query, bool OpenSearchOnConplete = false)
         {
             MusixSongResult result = null;
             string YT = "";
@@ -123,7 +124,7 @@ namespace Musix.Controls.Pages
             {
                 SP = query;
                 Console.WriteLine("Collect via spotify");
-                result = Main.Client.Collect(Main.Client.GetTrackByURL(query));
+                result = await Main.Client.Collect(Main.Client.GetTrackByURL(query));
             }
             else if (query.Contains("youtu"))
             {
@@ -135,7 +136,7 @@ namespace Musix.Controls.Pages
             {
                 Console.WriteLine("Collect via Query");
 
-                result = Main.Client.CollectByName(query);
+                result = await Main.Client.CollectByName(query);
             }
 
             if (result != null && result.HasTrack && result.HasVideo)
@@ -220,7 +221,7 @@ namespace Musix.Controls.Pages
 
         private async void onManualPrompt(string SpotifyTrackID, string YoutubeTrackID)
         {
-            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(YoutubeExplode.Videos.VideoId.Parse(YoutubeTrackID)) };
+            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(new YoutubeExplode.Videos.VideoId(YoutubeTrackID)) };
             AddMusixEntry(result);
         }
     }
