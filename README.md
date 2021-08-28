@@ -3,10 +3,6 @@ A WIP Multi-Platform YouTube &amp; Spotify music downloader tool. Downloads musi
 
 <img src="https://i.ibb.co/tbsRSfx/Musix-Main-BDROP.png" width="400px">
 
-
-# Note: Currently not fully operational
-Recent changes to Youtube has rendered parts of Musix unstable, fixes are in progress
-
 # Still in early stages of development
 
 The downloader itself it contained in Musix.Core. Musix Desktop has yet been started, and Musix.Console is being used for the early development process.
