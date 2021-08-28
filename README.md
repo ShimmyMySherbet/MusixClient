@@ -38,7 +38,7 @@ MusixClient will be coming to MacOS and Linux, however, development for these pl
 ### Official Plugins
 Completed:
 * <a href="https://github.com/ShimmyMySherbet/MusixSync">Musix Sync</a>: A plugin to remotely sync your downloaded music to an Android device.
-* <a href="https://github.com/ShimmyMySherbet/MusixClient/tree/master/ManualMetadata">Manual Metadata</a>: Allows downloading of YouTube racks that are not on Spotify. Using manually entered metadata.
+* <a href="https://github.com/ShimmyMySherbet/MusixClient/tree/master/ManualMetadata">Manual Metadata</a>: Allows downloading of YouTube tacks that are not on Spotify. Using manually entered metadata, incl Album Cover.
 
 
 This is the successor to my old 'YoutubeDownloder' project.
