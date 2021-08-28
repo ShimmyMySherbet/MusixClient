@@ -61,6 +61,7 @@
             this.ClientSize = new System.Drawing.Size(1334, 694);
             this.Controls.Add(this.MDSSideBar);
             this.Controls.Add(this.PNContent);
+            this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(114)))), ((int)(((byte)(137)))), ((int)(((byte)(218)))));
             this.Name = "MainWindow";
             this.Text = "Musix";
             this.Load += new System.EventHandler(this.MainWindow_Load);

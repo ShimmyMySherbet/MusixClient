@@ -220,7 +220,7 @@ namespace Musix.Controls.Pages
 
         private async void onManualPrompt(string SpotifyTrackID, string YoutubeTrackID)
         {
-            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(new YoutubeExplode.Videos.VideoId(YoutubeTrackID)) };
+            MusixSongResult result = new MusixSongResult() { SpotifyTrack = MainWindow.Instance.Client.GetTrackByID(SpotifyTrackID), YoutubeVideo = await MainWindow.Instance.Client.YouTube.Videos.GetAsync(YoutubeExplode.Videos.VideoId.Parse(YoutubeTrackID)) };
             AddMusixEntry(result);
         }
     }

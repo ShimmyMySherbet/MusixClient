@@ -20,11 +20,7 @@ namespace Musix.Core.Models.Components
         public MusixSongResult Collect(string VideoURL)
         {
             Console.WriteLine("get id");
-            var GetVid = Client.YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
-            Console.WriteLine("get wait");
-            GetVid.Wait();
-            Console.WriteLine("got vid");
-            Video video = GetVid.Result;
+            var video = Client.YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL)).GetSync();
             MusixSongResult Result = new MusixSongResult();
             Console.WriteLine("run extrap");
             ExtrapResult Extrap = Client.DetailsExtrapolator.ExtrapolateDetails(video.Title);

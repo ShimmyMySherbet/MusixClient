@@ -8,7 +8,8 @@ namespace Musix.Core.Modules
     public static class SpotifyTrackFinder
     {
         public static bool DebugMode = false;
-        public static FullTrack FindTrack(SpotifyWebAPI Spotify, ExtrapResult Ext, TimeSpan BaseLength, double MaxDeviation)
+
+        public static FullTrack FindTrack(SpotifyWebAPI Spotify, ExtrapResult Ext, TimeSpan? BaseLength, double MaxDeviation)
         {
             PrintDebug($"searching tracks. Extrap; Name: {Ext.TrackName}, Artist: {Ext?.TrackArtist}. " +
                 $"   Source: {Ext.Source}");
@@ -22,11 +23,31 @@ namespace Musix.Core.Modules
                 if (SelectedResult == null && ContainsMatch(Ext.TrackName, Ext.Source, Result.Name))
                 {
                     PrintDebug("[Check] Name Passed");
-                    if (!(Math.Abs(Result.DurationMs - BaseLength.TotalMilliseconds) > MaxDeviation))
+
+                    if (BaseLength != null)
                     {
-                        PrintDebug("[Check] Dur Passed");
-                        if (!(string.IsNullOrEmpty(Ext.TrackArtist)) &&  ContainsMatch(Ext.TrackArtist, Ext.Source, Result.Artists[0].Name))
+                        if (!(Math.Abs(Result.DurationMs - BaseLength.Value.TotalMilliseconds) > MaxDeviation))
+                        {
+                            PrintDebug("[Check] Dur Passed");
+                            if (!(string.IsNullOrEmpty(Ext.TrackArtist)) && ContainsMatch(Ext.TrackArtist, Ext.Source, Result.Artists[0].Name))
                             {
+                                PrintDebug("[Check] Len Passed");
+                                SelectedResult = Result;
+                            }
+                            else
+                            {
+                                PrintDebug("[Check] len Failed");
+                            }
+                        }
+                        else
+                        {
+                            PrintDebug("[Check] dur Failed");
+                        }
+                    }
+                    else
+                    {
+                        if (!(string.IsNullOrEmpty(Ext.TrackArtist)) && ContainsMatch(Ext.TrackArtist, Ext.Source, Result.Artists[0].Name))
+                        {
                             PrintDebug("[Check] Len Passed");
                             SelectedResult = Result;
                         }
@@ -35,11 +56,8 @@ namespace Musix.Core.Modules
                             PrintDebug("[Check] len Failed");
                         }
                     }
-                    else
-                    {
-                        PrintDebug("[Check] dur Failed");
-                    }
-                } else
+                }
+                else
                 {
                     PrintDebug("[Check] name Failed");
                 }
@@ -48,9 +66,11 @@ namespace Musix.Core.Modules
             return SelectedResult;
         }
 
-        private static void PrintDebug(string msg) {
+        private static void PrintDebug(string msg)
+        {
             if (DebugMode) Console.WriteLine(msg);
         }
+
         private static bool ContainsMatch(string Selected, string Source, string Match)
         {
             string sel = Selected.ToLower();

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using Musix.Core.API;
+﻿using Musix.Core.API;
 using Musix.Core.Components;
 using Musix.Core.Components.Providers;
 using Musix.Core.Helpers;
@@ -16,6 +9,13 @@ using Musix.Core.Modules;
 using SpotifyAPI.Web;
 using SpotifyAPI.Web.Auth;
 using SpotifyAPI.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using YoutubeExplode;
 using YoutubeExplode.Videos;
 using YoutubeExplode.Videos.Streams;
@@ -88,7 +88,6 @@ namespace Musix.Core.Client
             }
         }
 
-
         public async Task<MusixSongResult> CollectByNameAsync(string Term)
         {
             var SW = new StopWatch();
@@ -105,7 +104,7 @@ namespace Musix.Core.Client
             }
         }
 
-        public FullTrack FindTrack(ExtrapResult Ext, TimeSpan BaseLength, double MaxDeviation)
+        public FullTrack FindTrack(ExtrapResult Ext, TimeSpan? BaseLength, double MaxDeviation)
         {
             return SpotifyTrackFinder.FindTrack(Spotify, Ext, BaseLength, MaxDeviation);
         }
@@ -163,11 +162,7 @@ namespace Musix.Core.Client
         public MusixSongResult Collect(string VideoURL)
         {
             Console.WriteLine("get id");
-            var GetVid = YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL));
-            Console.WriteLine("get wait");
-            GetVid.Wait();
-            Console.WriteLine("got vid");
-            Video video = GetVid.Result;
+            var video = YouTube.Videos.GetAsync(YoutubeHeleprs.GetVideoID(VideoURL)).GetSync();
             MusixSongResult Result = new MusixSongResult();
             Console.WriteLine("run extrap");
             ExtrapResult Extrap = DetailsExtrapolator.ExtrapolateDetails(video.Title);
@@ -229,7 +224,7 @@ namespace Musix.Core.Client
             ProgressChangedCallback?.Invoke(step, max, status, download);
         }
 
-        public async Task DownloadTrack(MusixSongResult Track, string OutputDirectory, AudioEffectStack Effects = null, CancellationToken cancellationToken = default)
+        public async Task DownloadTrack(MusixSongResult Track, string OutputDirectory, AudioEffectStack Effects = null, CancellationToken cancellationToken = default, Stream overrideCover = null)
         {
             int Steps;
             int Step = 0;
@@ -277,7 +272,7 @@ namespace Musix.Core.Client
             // Step 3
             Step++;
             TryCallback(Step, Steps, "Sorting Streams", Track);
-            List<AudioOnlyStreamInfo> AudioStreams = StreamData.GetAudioOnly().ToList();
+            List<AudioOnlyStreamInfo> AudioStreams = StreamData.GetAudioOnlyStreams().ToList();
             AudioStreams.OrderBy(dat => dat.Bitrate);
             if (AudioStreams.Count() == 0) Console.WriteLine("No Streams");
             if (AudioStreams.Count() == 0) return;
@@ -290,20 +285,34 @@ namespace Musix.Core.Client
                 return;
             }
 
-            Task AudioDownloadTask = YouTube.Videos.Streams.DownloadAsync(SelectedStream, SourceAudio);
+            var AudioDownloadTask = YouTube.Videos.Streams.DownloadAsync(SelectedStream, SourceAudio);
 
             WebClient WebCl = new WebClient();
 
             Step++;
             TryCallback(Step, Steps, "Starting", Track);
-            SpotifyImage Cover = Track.SpotifyTrack.Album.Images[0];
-            var CoverDownloadTask = new Task(() =>
+            Task CoverDownloadTask = null;
+
+            if (overrideCover == null)
             {
-                Console.WriteLine("Downloading Cover");
-                WebCl.DownloadFile(new Uri(Cover.Url), AlbumCover);
+                SpotifyImage Cover = Track.SpotifyTrack.Album.Images[0];
+
+                CoverDownloadTask = new Task(() =>
+               {
+                   Console.WriteLine("Downloading Cover");
+                   WebCl.DownloadFile(new Uri(Cover.Url), AlbumCover);
+               }
+               );
+                CoverDownloadTask.Start();
+            } else
+            {
+                using(var fs = new FileStream(AlbumCover, FileMode.OpenOrCreate))
+                {
+                    overrideCover.CopyTo(fs);
+                    fs.Flush();
+                }
             }
-            );
-            CoverDownloadTask.Start();
+
             Step++;
             TryCallback(Step, Steps, "Waiting for downloads", Track);
             if (cancellationToken.IsCancellationRequested)
@@ -311,11 +320,12 @@ namespace Musix.Core.Client
                 return;
             }
 
-            if (!AudioDownloadTask.IsCompleted)
+            if (overrideCover == null && CoverDownloadTask != null && !CoverDownloadTask.IsCompleted)
             {
                 Console.WriteLine("Waiting on artwork...");
                 CoverDownloadTask.Wait();
             }
+
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
@@ -324,7 +334,7 @@ namespace Musix.Core.Client
             if (!AudioDownloadTask.IsCompleted)
             {
                 Console.WriteLine("Waiting on audio...");
-                AudioDownloadTask.Wait();
+                SpinWait.SpinUntil(() => AudioDownloadTask.IsCompleted);
                 Console.WriteLine("Download Complete.");
             }
             Thread.Sleep(100);

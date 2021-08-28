@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Forms;
-using Musix.Controls.MenuItems;
+﻿using Musix.Controls.MenuItems;
 using Musix.Core.Client;
 using Musix.Managers;
 using Musix.Models;
@@ -14,6 +7,13 @@ using Musix.Windows.API.Attributes;
 using Musix.Windows.API.Interfaces;
 using Musix.Windows.API.Models;
 using Musix.Windows.API.Themes;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace Musix
 {
