@@ -19,33 +19,29 @@ Current features:
 Planned features:
 * Lyric embedding from Genius
 * In-App plugin downloader/manager
-* Musix Plugin Packer
-
 
 ### Musix Client for Windows
 Current Features:
 * UI Themes/Skinning
+* Musix Plugin Packer
 
 In Development:
 * Plugin API
-* Musix UI
 
 Planned features:
 * Audio trimming Visualiser
 * Bulk album/playlist (Youtube/Spotify) downloads
 
-### Musix Client for Mobile
-Currently on Hiatus
-
-### Musix Client for Linux
-Currently on Hiatus, will likely be a command-line tool similar to the current Musix.Console development tool.
+### Alternate Platforms
+MusixClient will be coming to MacOS and Linux, however, development for these platforms is currently suspended until .NEt Maui is released.
 
 ### Official Plugins
 Completed:
 * <a href="https://github.com/ShimmyMySherbet/MusixSync">Musix Sync</a>: A plugin to remotely sync your downloaded music to an Android device.
+* <a href="https://github.com/ShimmyMySherbet/MusixClient/tree/master/ManualMetadata">Manual Metadata</a>: Allows downloading of YouTube tacks that are not on Spotify. Using manually entered metadata, incl Album Cover.
 
 
 This is the successor to my old 'YoutubeDownloder' project.
 
 ## See More
-If you want to see updates and screenshots of development, or see new features, you can join my discord server: https://discord.gg/hpHrGac
+If you want to see updates and screenshots of development, or see new features, you can join my <a href="https://discord.shimmymysherbet.com/">Discord Server</a>
