@@ -13,10 +13,8 @@ namespace Musix.Controls
 
     public partial class FFMPEGDownloader : Form
     {
-        /*ffmpeg.zeranoe.com went down, and I cannot find any downloads of just ffmpeg.exe on any of the git releases.
-         * This allows a download size of 26mb compared to ~100mb
-         */
-        public const string DownloadURL = "https://www.dropbox.com/s/r4q7urpdqwcgy7u/ffmpeg.zip?dl=1";
+        public const string DownloadURL = "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2021-08-31-14-55/ffmpeg-n4.4-80-gbf87bdd3f6-win64-lgpl-4.4.zip";
+        public static readonly string[] DownloadFiles = { "ffmpeg.exe", "ffprobe.exe" };
         private long m_DownloadSize { get; set; }
         private long m_Downloaded { get; set; }
         private long m_DownloadedLastSecond { get; set; }
@@ -62,13 +60,13 @@ namespace Musix.Controls
                 {
                     if (downloadStr == null)
                     {
-                        if (m_DownloadSize > 1024 * 1024)
+                        if (m_DownloadSize > 1000 * 1000)
                         {
-                            downloadStr = $"{Math.Round((double)m_DownloadSize / (1024 * 1024), 2)}mb";
+                            downloadStr = $"{Math.Round((double)m_DownloadSize / (1000 * 1000), 2)}mb";
                         }
-                        else if (m_DownloadSize > 1024)
+                        else if (m_DownloadSize > 1000)
                         {
-                            downloadStr = $"{Math.Round((double)m_DownloadSize / (1024), 2)}kb";
+                            downloadStr = $"{Math.Round((double)m_DownloadSize / (1000), 2)}kb";
                         }
                         else
                         {
@@ -83,13 +81,13 @@ namespace Musix.Controls
                     m_DownloadedLastSecond = 0;
 
                     var lastSec = "";
-                    if (bytesLastSec > 1024 * 1024)
+                    if (bytesLastSec > 1000 * 1000)
                     {
-                        lastSec = $"{Math.Round(bytesLastSec / (1024 * 1024), 2)}mbp/s";
+                        lastSec = $"{Math.Round(bytesLastSec / (1000 * 1000), 2)}mbp/s";
                     }
-                    else if (bytesLastSec > 1024)
+                    else if (bytesLastSec > 1000)
                     {
-                        lastSec = $"{Math.Round(bytesLastSec / (1024), 2)}kbp/s";
+                        lastSec = $"{Math.Round(bytesLastSec / (1000), 2)}kbp/s";
                     }
                     else
                     {
@@ -97,19 +95,18 @@ namespace Musix.Controls
                     }
 
                     string downloadedStr;
-                    if (m_DownloadSize > 1024 * 1024)
+                    if (m_DownloadSize > 1000 * 1000)
                     {
-                        downloadedStr = $"{Math.Round((double)m_Downloaded / (1024 * 1024), 2)}mb";
+                        downloadedStr = $"{Math.Round((double)m_Downloaded / (1000 * 1000), 2)}mb";
                     }
-                    else if (m_DownloadSize > 1024)
+                    else if (m_DownloadSize > 1000)
                     {
-                        downloadedStr = $"{Math.Round((double)m_Downloaded / (1024), 2)}kb";
+                        downloadedStr = $"{Math.Round((double)m_Downloaded / (1000), 2)}kb";
                     }
                     else
                     {
                         downloadedStr = $"{m_Downloaded}b";
                     }
-
 
                     _ = TaskFactory.StartNew(() =>
                     {
@@ -131,7 +128,6 @@ namespace Musix.Controls
                     });
                     await Task.Delay(100);
                 }
-                
             }
 
             Debug.WriteLine("Send restart...");
@@ -152,7 +148,7 @@ namespace Musix.Controls
             {
                 m_DownloadSize = response.ContentLength;
 
-                ushort bufferSize = 1024;
+                ushort bufferSize = 1000;
                 byte[] buffer = new byte[bufferSize];
                 m_Stage = 1;
                 using (var memory = new MemoryStream())
@@ -171,12 +167,27 @@ namespace Musix.Controls
 
                     using (var zip = new ZipFile(memory))
                     {
-                        var entry = zip.GetEntry("ffmpeg.exe");
-                        using (var ffmpeg = zip.GetInputStream(entry))
-                        using (var disk = new FileStream("ffmpeg.exe", FileMode.Create, FileAccess.Write))
+                        foreach (var f in DownloadFiles)
                         {
-                            await ffmpeg.CopyToAsync(disk);
-                            await disk.FlushAsync();
+                            ZipEntry ent = null;
+                            for (int i = 0; i < zip.Count; i++)
+                            {
+                                if (zip[i].Name.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    ent = zip[i];
+                                    break;
+                                }
+                            }
+
+                            if (ent != null)
+                            {
+                                using (var ffmpeg = zip.GetInputStream(ent))
+                                using (var disk = new FileStream(f, FileMode.Create, FileAccess.Write))
+                                {
+                                    await ffmpeg.CopyToAsync(disk);
+                                    await disk.FlushAsync();
+                                }
+                            }
                         }
                     }
                     m_Stage = 3;

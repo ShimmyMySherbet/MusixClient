@@ -20,7 +20,7 @@ namespace Musix
             Application.SetCompatibleTextRenderingDefault(false);
            
             // Check that FFMPEG is available
-            if(!FileExists("ffmpeg.exe"))
+            if(!FileExists("ffmpeg.exe") || !FileExists("ffprobe.exe"))
             {
                 var downloader = new FFMPEGDownloader();
                 Application.Run(downloader);
