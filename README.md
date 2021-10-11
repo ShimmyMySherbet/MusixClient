@@ -10,7 +10,7 @@ The downloader itself it contained in Musix.Core. Musix Desktop has yet been sta
 ### Musix Core
 Current features:
 * Sources from Youtube (audio) and Spotify (Metadata)
-* Embeds musix metadata (Song/Album name, atrists, ect.)
+* Embeds ID3 metadata (Song/Album name, atrists, ect.)
 * Embeds album artwork
 * Audio Normilization
 * Track Trimming/Cropping
