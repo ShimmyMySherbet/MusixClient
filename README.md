@@ -1,10 +1,18 @@
-# MusixDownloader
-A WIP Multi-Platform YouTube &amp; Spotify music downloader tool. Downloads music with Artwork &amp; metadata.
+<p align="center">
+	<img src="https://i.imgur.com/Xo9MD4S.png" width="100%">
+	<img src="https://img.shields.io/github/downloads/ShimmyMySherbet/MusixClient/total"/>
+	<img src="https://img.shields.io/github/repo-size/ShimmyMySherbet/MusixClient"/>
+	<img src="https://img.shields.io/github/v/release/ShimmyMySherbet/MusixClient"/>
+	<img src="https://img.shields.io/github/issues-raw/ShimmyMySherbet/MusixClient"/>
+	<img src="https://img.shields.io/github/issues-closed-raw/ShimmyMySherbet/MusixClient"/>
+</p>
 
-<img src="https://i.ibb.co/tbsRSfx/Musix-Main-BDROP.png" width="400px">
+---
+A **WIP** Multi-Platform YouTube &amp; Spotify music downloader tool.Downloads music with Artwork &amp; metadata.
 
-# Still in development
 
+
+### Still in development
 The downloader itself it contained in Musix.Core. Musix Desktop has yet been started, and Musix.Console is being used for the early development process.
 
 ### Musix Core
@@ -14,7 +22,6 @@ Current features:
 * Embeds album artwork
 * Audio Normilization
 * Track Trimming/Cropping
-
 
 Planned features:
 * Lyric embedding from Genius
@@ -43,5 +50,5 @@ Completed:
 
 This is the successor to my old 'YoutubeDownloder' project.
 
-## See More
+### See More
 If you want to see updates and screenshots of development, or see new features, you can join my <a href="https://discord.shimmymysherbet.com/">Discord Server</a>
